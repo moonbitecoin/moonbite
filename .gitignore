@@ -1,2 +1,6 @@
 blockchain_monitor.log
 blockchain_node.log
+
+.git-rewrite/
+__pycache__/
+*.pyc
