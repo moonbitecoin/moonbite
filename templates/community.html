@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block body_class %}mb-v2{% endblock %}
+
+{% block title %}Community — MoonBite{% endblock %}
+{% block meta_description %}MoonBite is small and early — and that makes every contribution count. Read the code, run a node, help someone mine their first block, or open a pull request.{% endblock %}
+
+{% block content %}
+<section class="mb-hero">
+    <div class="mb-hero-glow"></div>
+    <div class="mb-container">
+        <div class="mb-hero-inner">
+            <span class="mb-badge"><span class="mb-dot"></span> Community</span>
+            <h1 class="mb-hero-title">Small and early. <span class="mb-gradient-text">That's the point.</span></h1>
+            <p class="mb-hero-sub">MoonBite is pre-mainnet and the community is just forming. Which means what you do — run a node, file a bug, help a newcomer find their first block — actually moves the needle. Early people leave fingerprints.</p>
+            <div class="mb-cta-row">
+                <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="btn btn-primary mb-btn-xl" target="_blank" rel="noopener">View on GitHub</a>
+                <a href="/full-node" class="btn btn-secondary mb-btn-xl">Run a node</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Honest status</span>
+            <h2 class="mb-section-title">Where things actually stand</h2>
+            <p class="mb-section-sub">We'd rather undersell than oversell. MoonBite is a working testnet — real proof-of-work, a real block explorer, real wallets. But mainnet hasn't launched, and the community is still small. Both of those things are true at once.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">✅</div>
+                <h3>What works today</h3>
+                <p>Testnet mines real blocks. The web wallet makes real addresses. The explorer reads the live chain. And you can run every bit of it yourself.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔧</div>
+                <h3>What's being built</h3>
+                <p>Mainnet launch, automated atomic swaps, and the exchange listing process are next up. Every one of them is tracked in the open on GitHub.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">👋</div>
+                <h3>Who's here</h3>
+                <p>A handful of early miners, developers, and node operators. Nobody's on payroll to hype this. People are here because the project is genuinely interesting to them.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Ways to participate</span>
+            <h2 class="mb-section-title">Jump in wherever you want</h2>
+            <p class="mb-section-sub">No signup. No membership fee. No permission to ask for. Pick whatever level of involvement fits the time you've got.</p>
+        </div>
+        <div class="mb-grid mb-grid-2">
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">⛏️</div>
+                <h3 class="mb-card-title">Mine the network</h3>
+                <p class="mb-card-text">Run the miner and throw your hashrate at the testnet. Every block you find hardens the proof-of-work chain and earns you the reward. No pool required — solo mine from day one.</p>
+                <a href="/mine" class="mb-card-link">Start mining →</a>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">🖥️</div>
+                <h3 class="mb-card-title">Run a full node</h3>
+                <p class="mb-card-text">Download MoonBite Core, sync the chain, and validate every block yourself. Full nodes are the backbone of any decentralised network. The more of them there are, the harder the chain is to attack.</p>
+                <a href="/full-node" class="mb-card-link">Node setup guide →</a>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">💻</div>
+                <h3 class="mb-card-title">Read and contribute code</h3>
+                <p class="mb-card-text">The full source — node, wallet, explorer, and this website — is on GitHub. Open an issue, review a pull request, or send a patch. Every contribution goes through the same public review, no exceptions.</p>
+                <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="mb-card-link" target="_blank" rel="noopener">GitHub repository →</a>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">📖</div>
+                <h3 class="mb-card-title">Help others learn</h3>
+                <p class="mb-card-text">Answer questions, write up what you've worked out, and point newcomers at the right docs. A project people can actually understand grows a stronger community. Clear writing is real work.</p>
+                <a href="/learn" class="mb-card-link">Learning resources →</a>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">🏪</div>
+                <h3 class="mb-card-title">Accept MBITE at your business</h3>
+                <p class="mb-card-text">Run a business or project that wants to take MBITE? The merchant guide walks through self-custody payments — where no processor ever holds your coins for you.</p>
+                <a href="/merchants" class="mb-card-link">Merchant guide →</a>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">💬</div>
+                <h3 class="mb-card-title">Chat with the community</h3>
+                <p class="mb-card-text">Ask a question or start a thread on the discussion board — no account needed, just pick a name. More chat links live in the GitHub repository, kept current there instead of rotting on a landing page.</p>
+                <a href="/discussions" class="mb-card-link">Open the forum →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Open source</span>
+            <h2 class="mb-section-title">Don't trust us. Check it.</h2>
+            <p class="mb-section-sub">MoonBite is built in the open. You never have to take anyone's word for anything here — the code is right there. Read it yourself.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">⛓️</div>
+                <h3>Node (MoonBite Core)</h3>
+                <p>The reference full-node implementation, forked from the Litecoin lineage (Bitcoin below that). It handles block validation, peer connections, and the RPC interface.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🌐</div>
+                <h3>This website</h3>
+                <p>The Flask app behind this site — wallet, explorer, order book, all of it — sits in the same repository. Clone it and run it locally in minutes.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔑</div>
+                <h3>Wallet &amp; crypto</h3>
+                <p>Key generation, bech32 encoding, and transaction signing all run client-side in JavaScript you can audit. No private key ever leaves your browser for our server.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: var(--spacing-2xl);">
+            <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="btn btn-primary btn-large mb-reveal" target="_blank" rel="noopener">View the full repository on GitHub</a>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        {% set notify_title = "Keep up with the project." %}
+        {% set notify_text = "One email when mainnet launches, one when the first exchange listing goes live. That's all we'll ever send." %}
+        {% set notify_source = "community" %}
+        {% include "partials/notify_form.html" %}
+    </div>
+</section>
+{% endblock %}

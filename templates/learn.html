@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block body_class %}mb-v2{% endblock %}
+
+{% block title %}Learn MoonBite — FAQ &amp; crypto basics{% endblock %}
+{% block meta_description %}What is MoonBite? Is it live? Can I buy MBITE? How do I mine it? Straight answers to the most common MoonBite questions.{% endblock %}
+
+{% block content %}
+<section class="mb-hero">
+    <div class="mb-hero-glow"></div>
+    <div class="mb-container">
+        <div class="mb-hero-inner">
+            <span class="mb-badge"><span class="mb-dot"></span> Learn</span>
+            <h1 class="mb-hero-title">Start <span class="mb-gradient-text">here.</span></h1>
+            <p class="mb-hero-sub">New to MoonBite, or to crypto at all? This is the page. Straight answers, no jargon, no hype.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">FAQ</span>
+            <h2 class="mb-section-title">Frequently asked questions</h2>
+        </div>
+        <div class="mb-faq">
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">What is MoonBite (MBITE)? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">MoonBite is an open, fair-launch cryptocurrency built on a Litecoin-lineage core. It's proof-of-work money you mine on your own hardware, hold in your own wallet, and verify with your own node. No premine, and a fixed maximum supply of ~33,000,000 MBITE.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Is MoonBite live yet? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">Not fully. MoonBite is pre-mainnet. You can run it on testnet and regtest today, mine it, and explore the chain — but coins carry no market value yet, and it isn't trading anywhere.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Can I buy MBITE? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. MBITE isn't listed on any exchange, so there's no buy button. The only way to get it right now is to <a href="/mine" class="link">mine it</a>. Listings are on the roadmap — <a href="/markets" class="link">get notified</a> when one goes live.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">How do I mine MoonBite? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">Make an address in the wallet, then run a miner — browser, one-click desktop, or command line. The block reward pays straight to your address. Full walkthrough in the <a href="/mine" class="link">mining guide</a>.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">What are my odds of mining a block? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">Every hash your miner computes is an independent lottery ticket. On a live network your chance of finding any given block is just your share of the total hashrate — if you run 1% of the network's power, you find roughly 1 block in every 100, and your expected time per block is the block time (2.5&nbsp;min) divided by that share. Faster hardware buys a bigger share, nothing more. One honest catch: mining is <em>memoryless</em>. A long dry spell doesn't make you "due" — after a million misses the very next hash still wins with the exact same tiny probability. There's no streak, no momentum, no posterior that shifts in your favour from past failures.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">What does "self-custody" mean? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">You hold your own private keys instead of trusting a company to hold them for you. The MoonBite wallet is non-custodial: your keys never leave your device, and this site will never ask for your seed phrase or private key.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Is MoonBite an investment? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. MoonBite is an open-source technology project, not an investment or a security. Nothing here is financial advice, and nobody is promising future value.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Glossary</span>
+            <h2 class="mb-section-title">Words worth knowing</h2>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">⛓️</div><h3>Block</h3><p>A batch of transactions added to the chain. New blocks are found through mining.</p></div>
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">⛏️</div><h3>Proof-of-work</h3><p>The mining process that secures the network by requiring real computational work.</p></div>
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">👛</div><h3>Wallet</h3><p>Software that holds your keys and lets you send and receive MBITE.</p></div>
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">🖧</div><h3>Node</h3><p>Software that validates and relays the chain, enforcing the rules independently.</p></div>
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">📉</div><h3>Halving</h3><p>A scheduled cut to the block reward — MoonBite halves every 330,000 blocks.</p></div>
+            <div class="mb-feature mb-reveal"><div class="mb-feature-icon">🧾</div><h3>Mempool</h3><p>The waiting room of unconfirmed transactions before they're mined into a block.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-section">
+    <div class="mb-container">
+        {% set notify_title = "Still curious? Follow along." %}
+        {% set notify_text = "One email about the exchange listing when it happens. Nothing else." %}
+        {% set notify_source = "learn" %}
+        {% include "partials/notify_form.html" %}
+    </div>
+</section>
+{% endblock %}

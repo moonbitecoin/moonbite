@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block body_class %}mb-v2{% endblock %}
+
+{% block title %}Privacy Policy — MoonBite{% endblock %}
+{% block meta_description %}MoonBite's plain-language privacy policy: no trackers, no ads, no analytics. The only data we collect is an email address if you choose to submit it for listing notifications.{% endblock %}
+
+{% block content %}
+<section class="mb-hero">
+    <div class="mb-hero-glow"></div>
+    <div class="mb-container">
+        <div class="mb-hero-inner">
+            <span class="mb-badge"><span class="mb-dot"></span> Privacy</span>
+            <h1 class="mb-hero-title">No trackers. <span class="mb-gradient-text">No games.</span></h1>
+            <p class="mb-hero-sub">No trackers. No ads. No analytics beacons. Here's exactly what this site does and doesn't collect, in plain English instead of legalese. It's a summary, not a formal legal document.</p>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK SUMMARY BANNER -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-banner mb-reveal">
+            <span>Short version: this site collects <strong>nothing</strong> unless you choose to hand over your email in the notify form. We never sell it, share it, or market to you. Details below.</span>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT WE COLLECT -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Data collection</span>
+            <h2 class="mb-section-title">What we collect, and why</h2>
+        </div>
+        <div class="mb-faq">
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">The only personal data we collect: your email (optional) <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">
+                    <p>If you submit the "notify me" form, we store your email address. That's the only personal data we collect, and submitting it is entirely up to you — nothing on this site requires it.</p>
+                    <p style="margin-top: 0.75rem;"><strong>Where it lives:</strong> On the server that runs this site, in a plain text file (<code>notify_signups.jsonl</code>). It is not sent to a third-party email platform, a CRM, or any outside service.</p>
+                    <p style="margin-top: 0.75rem;"><strong>Why we keep it:</strong> One reason only — to tell you when MBITE lists on an exchange. We send one email when that happens. Not before, not a newsletter, not marketing.</p>
+                    <p style="margin-top: 0.75rem;"><strong>How to get removed:</strong> Message us through the <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="link" target="_blank" rel="noopener">GitHub repository</a> with the email you submitted and we'll delete it from the file.</p>
+                </div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">No trackers, no ads, no analytics <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">
+                    <p>This site loads no Google Analytics, no Facebook Pixel, no Hotjar, no Mixpanel, no third-party tracking or analytics script of any kind. No ads. No social widgets that phone home.</p>
+                    <p style="margin-top: 0.75rem;">We don't collect IP addresses, browser fingerprints, referrer URLs, or behavioral data. Tracking you across the web holds no interest for us.</p>
+                </div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Server logs <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">
+                    <p>Like any web server, our hosting environment may produce standard server logs — request timestamps, HTTP status codes, rough visitor counts — for operational reasons such as spotting errors or attacks. These logs are not used for advertising, profiling, or identifying individual users, and they are not shared with third parties.</p>
+                </div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LOCALSTORAGE / COOKIES -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Your browser</span>
+            <h2 class="mb-section-title">Cookies and local storage</h2>
+            <p class="mb-section-sub">No advertising cookies, no session-tracking cookies. Here's the little the site does store in your browser, and why.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🎨</div>
+                <h3>Theme preference</h3>
+                <p>Switch between light and dark mode and we save your choice in <code>localStorage</code> under the key <code>theme</code>. It's a convenience setting that stays on your device and never reaches the server.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">📧</div>
+                <h3>Notify email fallback</h3>
+                <p>When you submit the notify form, the site's JavaScript also tucks your email into <code>localStorage</code> as a fallback in case the server request fails. It stays on your device unless the submission succeeds.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🍪</div>
+                <h3>No tracking cookies</h3>
+                <p>We set no advertising cookies, no cross-site tracking cookies, no session identifiers tied to who you are. If your browser reports a cookie from this site, it's there to make the site work — not to follow you.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SELF-CUSTODY + KEYS -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Your wallet</span>
+            <h2 class="mb-section-title">We never see your keys or balances</h2>
+        </div>
+        <div class="mb-grid mb-grid-2">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔑</div>
+                <h3>Self-custody by design</h3>
+                <p>MoonBite is self-custodial. Your private keys and seed phrase are generated on your device and stay there. This site and its server have no access to your wallet, your seed phrase, your private keys, or your balance — and never will.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">📡</div>
+                <h3>What the node sees</h3>
+                <p>When you broadcast a transaction or look up an address, the MoonBite node handles that request. As on any public blockchain, transactions are visible to anyone running a node. We don't log queries beyond normal server operation, and we don't tie queries to identities.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DATA SHARING -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Sharing</span>
+            <h2 class="mb-section-title">We do not sell or share your data</h2>
+        </div>
+        <div class="mb-faq">
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Do you sell email addresses? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. Your email does one job — a single notification when MBITE lists on an exchange — and it's never sold, rented, traded, or handed to any third party for any reason, marketing included.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">Do you share data with advertisers or data brokers? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. No ad networks, no affiliate trackers, no data brokers. There's nothing to share — we collect almost nothing to begin with.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">What about law enforcement requests? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">We hold very little. If a valid legal order compelled us to disclose information, we could only hand over what we actually have — which, for most visitors, is nothing. We do not volunteer data to any government authority.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">How do I request deletion of my data? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">Open an issue or send a message through the <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="link" target="_blank" rel="noopener">GitHub repository</a> with the email you submitted and a deletion request. We'll remove it from the notification file promptly.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CLOSING -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-banner mb-reveal">
+            <span>This is a plain-language summary of how we handle privacy. It is <strong>not a formally reviewed legal document</strong>. Got a concern about privacy or data handling? Raise it on the GitHub repository. We're a small open-source project, and we take this seriously.</span>
+        </div>
+        <div style="text-align: center; margin-top: var(--spacing-2xl);">
+            <a href="/legal" class="btn btn-secondary mb-reveal">Legal disclaimer</a>
+            &nbsp;
+            <a href="/scams" class="btn btn-secondary mb-reveal">Avoid scams</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

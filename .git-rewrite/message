@@ -1,0 +1,10 @@
+Unify all marketing pages with the home_v2 editorial template
+
+Every base-extending page now reads like the homepage sting: the top bar
+drops its heavy glass box for the home_v2 gradient fade, hero sections go
+left-aligned and cinematic (larger headline, left CTAs) instead of the
+centered pill-badge card, and section heads left-align on a hairline rule.
+FAQ, roadmap and notify blocks opt back into centered layout so nothing
+breaks. Scoped entirely under body.mb-v2.
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>

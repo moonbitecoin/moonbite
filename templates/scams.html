@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block body_class %}mb-v2{% endblock %}
+
+{% block title %}Avoid Scams — MoonBite{% endblock %}
+{% block meta_description %}MoonBite will never DM you first, ask for your seed phrase, run a presale, or promise guaranteed returns. Learn how to spot fakes and stay safe.{% endblock %}
+
+{% block content %}
+<section class="mb-hero">
+    <div class="mb-hero-glow"></div>
+    <div class="mb-container">
+        <div class="mb-hero-inner">
+            <span class="mb-badge"><span class="mb-dot"></span> Safety</span>
+            <h1 class="mb-hero-title">Spot the <span class="mb-gradient-text">fakes.</span></h1>
+            <p class="mb-hero-sub">Scammers impersonate every crypto project, and MoonBite is no exception. Here's exactly what MoonBite will and won't do — so you can tell the real thing from a fake in seconds.</p>
+        </div>
+    </div>
+</section>
+
+<!-- WHAT WE WILL NEVER DO -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Hard rules</span>
+            <h2 class="mb-section-title">MoonBite will <em>never</em> do these things</h2>
+            <p class="mb-section-sub">See any of the following? It's a scam. Full stop.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">💬</div>
+                <div class="mb-card-title">DM you first</div>
+                <div class="mb-card-text">We will never message you first on Telegram, Discord, Twitter/X, Reddit, email, or anywhere else. If someone reaches out claiming to be MoonBite, they're an impersonator.</div>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">🗝️</div>
+                <div class="mb-card-title">Ask for your seed phrase or private key</div>
+                <div class="mb-card-text">No real part of MoonBite — this site, the wallet app, the node, the team — will ever ask for your seed phrase, private key, or wallet password. Anyone who asks is trying to rob you.</div>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">🎁</div>
+                <div class="mb-card-title">Run a presale, airdrop, or giveaway</div>
+                <div class="mb-card-text">No presale. No ICO. No airdrop. MoonBite is a fair launch — every MBITE is mined. Any account offering you free MBITE is a scam.</div>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">📈</div>
+                <div class="mb-card-title">Promise guaranteed returns</div>
+                <div class="mb-card-text">"Double your MBITE," "guaranteed 10×," "risk-free mining pool" — none of it is real. MoonBite is experimental pre-mainnet software. Nobody can promise you a profit.</div>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">💸</div>
+                <div class="mb-card-title">Ask you to pay to receive coins</div>
+                <div class="mb-card-text">You will never be asked to send MBITE, BTC, ETH, or any currency to get MBITE. "Pay a small fee to unlock your coins" is theft dressed up as a promotion.</div>
+            </div>
+            <div class="mb-card mb-reveal">
+                <div class="mb-card-icon">🏦</div>
+                <div class="mb-card-title">Offer custodial storage</div>
+                <div class="mb-card-text">MoonBite is self-custodial by design. There are no accounts, and we never hold coins for you. Anyone offering to "keep your MBITE safe in your MoonBite account" is an impersonator.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ONE WAY TO GET MBITE -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">The only way</span>
+            <h2 class="mb-section-title">Mining is the only way to get MBITE</h2>
+            <p class="mb-section-sub">No shortcut, no early investor round, no back-channel allocation. If a path to MBITE isn't mining, it's a scam.</p>
+        </div>
+        <div class="mb-grid mb-grid-2">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">⛏️</div>
+                <h3>Mine it yourself</h3>
+                <p>Run the MoonBite node and miner on your own hardware. The block reward goes straight to an address you control. No middleman, no signup, no fee to us.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔮</div>
+                <h3>Exchange listing, later on</h3>
+                <p>MBITE isn't listed on any exchange today. When it is, we'll announce it on <strong>this site only</strong>. We will never break the news through a cold DM or a third-party channel first.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: var(--spacing-2xl);">
+            <a href="/mine" class="btn btn-primary btn-large mb-reveal">Go to the mining guide</a>
+        </div>
+    </div>
+</section>
+
+<!-- HOW TO VERIFY OFFICIAL CHANNELS -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Official channels</span>
+            <h2 class="mb-section-title">How to know it's really MoonBite</h2>
+            <p class="mb-section-sub">Two sources. Treat everything else as unverified.</p>
+        </div>
+        <div class="mb-grid mb-grid-2">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🌐</div>
+                <h3>This website</h3>
+                <p>The only authoritative MoonBite website is the one you're on right now. Check the URL bar — the correct domain, a valid HTTPS lock. Any other domain is a copy, no matter how good it looks.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">💻</div>
+                <h3>The GitHub repository</h3>
+                <p>The real source code and official releases live at <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="link" target="_blank" rel="noopener">github.com/moonbitecoin/MoonBite-Coin</a>. Only download wallet software from the releases page there, and verify the checksums before you run anything.</p>
+            </div>
+        </div>
+        <div class="mb-banner mb-reveal" style="margin-top: var(--spacing-2xl);">
+            <span>When in doubt: <strong>don't click, don't paste your seed, don't send money.</strong> Real MoonBite software is free, open-source, and verifiable. Questions? See the <a href="/legal" class="link">legal page</a> or the <a href="/learn" class="link">learn page</a>.</span>
+        </div>
+    </div>
+</section>
+
+<!-- HOW TO STAY SAFE CHECKLIST -->
+<section class="mb-section" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">Stay safe</span>
+            <h2 class="mb-section-title">A checklist that actually helps</h2>
+            <p class="mb-section-sub">Run through these before you act on anything MBITE-related that showed up unsolicited.</p>
+        </div>
+        <div class="mb-grid mb-grid-3">
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔍</div>
+                <h3>Check the URL</h3>
+                <p>Scam sites copy the look but can't copy the domain. Watch for misspellings, extra hyphens, or a swapped TLD (.net, .io, .xyz when the real site uses another).</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🔐</div>
+                <h3>Guard your seed phrase</h3>
+                <p>Write your seed phrase on paper and keep it offline. Never type it into a website, never paste it in a chat, never photograph it. Anyone who asks for it is stealing your coins.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">📥</div>
+                <h3>Download from GitHub only</h3>
+                <p>Wallet binaries come from the GitHub releases page at the canonical URL above — nowhere else. Check the file hash in the release notes before you run anything.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🚩</div>
+                <h3>Pressure is a red flag</h3>
+                <p>"Limited time offer," "act now," "only 10 spots left" — urgency is the manipulation. Real software doesn't expire, and real coins have no exclusive access window.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">👥</div>
+                <h3>Be careful in communities</h3>
+                <p>Online communities pull in impersonators. Cross-check any account claiming to be MoonBite staff against the GitHub profile. There is no "official team" account on any chat platform.</p>
+            </div>
+            <div class="mb-feature mb-reveal">
+                <div class="mb-feature-icon">🛑</div>
+                <h3>Stop and look it up</h3>
+                <p>If something feels off, stop. Come back to this page or the GitHub repo and compare. A few minutes of checking beats trying to reverse an on-chain theft that can't be undone.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="mb-section">
+    <div class="mb-container">
+        <div class="mb-section-head mb-reveal">
+            <span class="mb-eyebrow">FAQ</span>
+            <h2 class="mb-section-title">Scam questions, straight answers</h2>
+        </div>
+        <div class="mb-faq">
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">I got a DM saying I won MBITE. Is it real? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. MoonBite runs no giveaways and will never DM you first. Block the sender, report them, and don't click any link they send.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">A "support agent" asked for my seed phrase to help me. Should I give it? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No, never. There is no MoonBite support team that needs your seed phrase. Your seed phrase is the master key to your coins — hand it over and you hand over full control. Real support never asks for it.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">I found a site selling MBITE before the listing. Is it legitimate? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. Nobody sells MBITE. Mining is the only way to get it right now. Any site or person offering to sell you MBITE is running a scam or, at best, trading testnet coins that have no real value.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">There's a "MoonBite airdrop" going around social media. Is it real? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">No. There is no MoonBite airdrop, there never has been, and none is planned. These promotions exist to harvest wallet addresses and drain them, or to trick you into connecting a wallet to a malicious contract.</div></div>
+            </div>
+            <div class="mb-faq-item mb-reveal">
+                <button class="mb-faq-q" type="button">How do I report a scam impersonating MoonBite? <span class="mb-plus">+</span></button>
+                <div class="mb-faq-a"><div class="mb-faq-a-inner">Open an issue on the <a href="https://github.com/moonbitecoin/MoonBite-Coin" class="link" target="_blank" rel="noopener">GitHub repository</a> with the details — screenshots, URLs, usernames. That helps the project track known fakes and warn others. Report the account to whatever platform it's running on, too.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

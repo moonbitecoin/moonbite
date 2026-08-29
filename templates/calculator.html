@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B0D12">
+<title>The Cost of Waiting — MoonBite</title>
+<meta name="description" content="Every week you wait, the same computer earns less MBITE. See exactly how much the delay costs you, on the real emission schedule.">
+<link rel="icon" type="image/svg+xml" href="/static/moonbite-logo.svg">
+<link rel="stylesheet" href="/static/fonts/moonbite-fonts.css">
+<style>
+/* Doc 04: three roles. A heavy grotesque for display, a quiet sans for
+   reading, a monospace for anything that is a number.
+
+   Archivo Black and Inter are self-hosted from /static/fonts (latin subset,
+   OFL-licensed). They are deliberately not loaded from Google Fonts: /privacy
+   states the site loads nothing that phones home, and a webfont CDN sends
+   every visitor's IP to Google on every page load. Every figure that is
+   money, a hash, an address or a block height is monospace with tabular
+   figures — amounts that shift width as they update look untrustworthy. */
+:root{
+  --font-display:'Archivo Black','Helvetica Neue','Arial Black',sans-serif;
+  --font-body:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-data:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
+  font-family:var(--font-display); font-weight:400; letter-spacing:-.02em;
+}
+.num,.mono,.addr,.cert .amt,.cl .v,.tot .v,.mcell .v,.odds .v,
+.loss .v,.count .v,.zero-band .v,.total .v,.vault-v,td.n,th.n{
+  font-family:var(--font-data); font-variant-numeric:tabular-nums;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0B0D12; color:#F5F2EA;
+  font-family:var(--font-body);
+  overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+::selection { background:#D9A441; color:#0B0D12; }
+a,button,select,input { -webkit-tap-highlight-color:transparent; font-family:inherit; }
+.wrap { position:relative; z-index:1; max-width:540px; margin:0 auto; padding:0 18px 70px; }
+.num { font-variant-numeric:tabular-nums; }
+.kicker { letter-spacing:.3em; font-size:.62rem; color:#D9A441; text-transform:uppercase;
+  font-weight:800; }
+
+.head { text-align:center; padding-top:5vh; }
+h1 { font-size:clamp(2rem,8.5vw,3.2rem); font-weight:800; line-height:1.03;
+  letter-spacing:-.025em; margin:13px 0 10px; }
+h1 .r { color:#C8402F; }
+.lede { color:#8A8580; font-size:.96rem; line-height:1.62; max-width:410px; margin:0 auto; }
+
+/* ------------------------------------------------------------ THE LOSS */
+.loss { background:linear-gradient(140deg, rgba(200,64,47,.16), rgba(22,26,34,.6));
+  border:1px solid rgba(200,64,47,.36); border-radius:20px; padding:24px 18px; margin-top:24px;
+  text-align:center; box-shadow:0 22px 66px rgba(0,0,0,.5); }
+.loss .k { font-size:.6rem; letter-spacing:.2em; color:#8A8580; text-transform:uppercase;
+  font-weight:800; }
+.loss .v { font-size:clamp(2.3rem,11vw,3.5rem); font-weight:800; color:#C8402F; line-height:1;
+  margin-top:10px; letter-spacing:-.02em; }
+.loss .u { font-size:.34em; color:#8A8580; font-weight:800; letter-spacing:.1em; }
+.loss .sub { color:#F5F2EA; font-size:.92rem; margin-top:10px; font-weight:600; }
+.loss .pct { display:inline-block; margin-top:12px; background:rgba(200,64,47,.2);
+  border:1px solid rgba(200,64,47,.45); border-radius:999px; padding:6px 14px;
+  font-size:.8rem; font-weight:800; color:#C8402F; letter-spacing:.05em; }
+
+/* ---------------------------------------------------------- THE CURVE */
+.chartcard { background:#161A22; border:1px solid rgba(217,164,65,.2); border-radius:20px;
+  padding:20px 16px 14px; margin-top:16px; }
+.chart-t { font-size:.6rem; letter-spacing:.2em; color:#8A8580; text-transform:uppercase;
+  font-weight:800; margin-bottom:4px; }
+.chart-s { color:#8A8580; font-size:.76rem; margin-bottom:14px; }
+#decay { width:100%; height:210px; display:block; }
+
+/* ----------------------------------------------------------- CONTROLS */
+.panel { background:#161A22; border:1px solid rgba(245,242,234,.09); border-radius:20px;
+  padding:20px 18px; margin-top:16px; }
+.lab { display:block; font-size:.6rem; letter-spacing:.2em; color:#8A8580; text-transform:uppercase;
+  font-weight:800; margin-bottom:9px; }
+select, input[type=number] { width:100%; background:#0B0D12; color:#F5F2EA; font-size:.95rem;
+  border:1px solid rgba(217,164,65,.28); border-radius:10px; padding:14px 12px; min-height:50px; }
+select:focus, input[type=number]:focus { outline:none; border-color:#D9A441; }
+.field + .field { margin-top:18px; }
+.slider { width:100%; accent-color:#D9A441; height:34px; }
+.slider-val { color:#D9A441; font-weight:800; }
+.ends { display:flex; justify-content:space-between; font-size:.66rem; color:#8A8580;
+  letter-spacing:.08em; }
+
+/* ------------------------------------------------------------- RESULT */
+.rows { margin-top:16px; }
+.row { display:flex; align-items:center; gap:12px; padding:14px 0;
+  border-top:1px solid rgba(245,242,234,.07); }
+.row .when { flex:1; font-size:.9rem; color:#8A8580; font-weight:700; }
+.row.now .when { color:#F5F2EA; }
+.row .amt { font-size:1.05rem; font-weight:800; color:#8A8580; font-variant-numeric:tabular-nums; }
+.row.now .amt { color:#2E9E6B; font-size:1.2rem; }
+.row .pen { font-size:.72rem; color:#C8402F; font-weight:800; min-width:52px; text-align:right; }
+
+.actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:24px; }
+.btn { border:none; border-radius:10px; padding:15px 24px; min-height:50px; font-weight:800;
+  font-size:.94rem; cursor:pointer; text-decoration:none; display:inline-flex;
+  align-items:center; justify-content:center; gap:8px; }
+.btn-gold { background:#D9A441; color:#0B0D12; box-shadow:0 12px 36px rgba(217,164,65,.28); }
+.btn-ghost { background:transparent; color:#F5F2EA; border:1px solid rgba(245,242,234,.24); }
+.fine { font-size:.73rem; color:#8A8580; line-height:1.72; text-align:center; margin-top:22px; }
+.toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(16px);
+  background:#2E9E6B; color:#04160E; font-weight:800; padding:12px 22px; border-radius:10px;
+  opacity:0; transition:all .3s; z-index:60; pointer-events:none; font-size:.88rem; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#card { display:none; }
+/* Doc 17: visible keyboard focus on every interactive element. */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, [tabindex]:focus-visible {
+  outline:2px solid #D9A441; outline-offset:3px; border-radius:6px;
+}
+</style>
+</head>
+<body>
+{% include 'partials/nav.html' %}
+
+<div class="wrap">
+  <section class="head">
+    <div class="kicker">THE EARLY MINER CALCULATOR</div>
+    <h1>Every week you wait,<br>you mine <span class="r">less</span>.</h1>
+    <p class="lede">Same machine, same electricity — a smaller share, forever.
+      Here is what the delay actually costs, on MoonBite's real schedule.</p>
+  </section>
+
+  <!-- the number that matters -->
+  <div class="loss">
+    <div class="k">WAITING ONE YEAR COSTS YOU</div>
+    <div class="v num" id="lossV">—<span class="u"> MBITE</span></div>
+    <div class="sub" id="lossSub">—</div>
+    <div class="pct" id="lossPct">—</div>
+  </div>
+
+  <!-- the collapse -->
+  <div class="chartcard">
+    <div class="chart-t">WHAT YOU MINE BY THE FIRST HALVING</div>
+    <div class="chart-s">Depending on the day you start. The bar only falls.</div>
+    <canvas id="decay"></canvas>
+  </div>
+
+  <!-- controls -->
+  <div class="panel">
+    <div class="field">
+      <label class="lab" for="hw">YOUR HARDWARE (RANDOMX)</label>
+      <select id="hw">
+        <option value="2500">Laptop CPU (4–8 cores) — ~2.5 KH/s</option>
+        <option value="12000" selected>Desktop CPU (Ryzen 9 class) — ~12 KH/s</option>
+        <option value="44000">Server CPU (64-core EPYC) — ~44 KH/s</option>
+        <option value="custom">Custom hashrate…</option>
+      </select>
+      <input type="number" id="hwCustom" placeholder="Hashes per second (H/s)" min="1"
+             style="display:none; margin-top:9px;">
+    </div>
+    <div class="field">
+      <label class="lab" for="net">NETWORK TODAY: <span class="slider-val" id="netLab">100 CPUs</span></label>
+      <input type="range" id="net" class="slider" min="0" max="5" step="1" value="2">
+      <div class="ends"><span>JUST YOU</span><span>100,000 CPUs</span></div>
+    </div>
+    <div class="rows" id="rows"></div>
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-gold" href="/start">Start mining now</a>
+    <button class="btn btn-ghost" id="btnCard">Share this</button>
+  </div>
+
+  <p class="fine">
+    Uses MoonBite's real schedule: {{ consensus.initial_subsidy_coins }} MBITE per block, one block
+    every {{ consensus.block_time_min }} minutes ({{ '{:,}'.format(consensus.daily_emission_coins) }}
+    MBITE emitted network-wide per day), halving at block
+    {{ '{:,}'.format(consensus.halving_interval) }}. Assumes the network grows to ten times its
+    current size over two years; difficulty retargets, so your earnings are your share of a fixed
+    daily pie. Figures are in MBITE only — it has no market value, is not an investment or a
+    security, and mining income is never guaranteed.
+  </p>
+</div>
+
+{% include 'partials/footer.html' %}
+<canvas id="card" width="1080" height="1080"></canvas>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  var C = {
+    reward: {{ consensus.initial_subsidy_coins }},
+    blockSec: {{ consensus.block_time_sec }},
+    blocksPerDay: {{ consensus.blocks_per_day }},
+    daily: {{ consensus.daily_emission_coins }},
+    halving: {{ consensus.halving_interval }},
+    height: {{ consensus.height }}
+  };
+  var CPU = 12000;                       /* reference desktop CPU for the slider */
+  var STEPS = [1,10,100,1000,10000,100000];
+  var GROWTH_DAYS = 730;
+
+  function $(id){ return document.getElementById(id); }
+  function fmt(n){
+    if (n >= 1000) return Math.round(n).toLocaleString('en-US');
+    if (n >= 10) return n.toFixed(1);
+    return n.toFixed(2);
+  }
+  /* clipboard.writeText rejects on insecure contexts, denied permission and
+     some browsers; an uncaught rejection surfaces as a console error. */
+  function copyText(s){
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText)
+        return navigator.clipboard.writeText(s).catch(function(){});
+    } catch(e){}
+    return null;
+  }
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); },2200); }
+
+  if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+      r=Math.min(r,w/2,h/2); this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r);
+      this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r);
+      this.closePath(); return this; };
+  }
+
+  function myHash(){
+    if ($('hw').value === 'custom'){ var v=parseFloat($('hwCustom').value); return v>0?v:CPU; }
+    return parseFloat($('hw').value);
+  }
+
+  /* Day-by-day integration of your share of a fixed daily emission, with the
+     network growing toward ten times its current size over two years. */
+  function earned(startDay, endDay, my, todayCpus, finalCpus){
+    var total = 0;
+    for (var d = Math.floor(startDay); d < Math.floor(endDay); d++){
+      var t = Math.min(1, d/GROWTH_DAYS);
+      var netHs = Math.max((todayCpus + (finalCpus-todayCpus)*t) * CPU, my);
+      total += C.daily * (my/netHs);
+    }
+    return total;
+  }
+
+  /* -------------------------------------------------------- the chart */
+  var cv=$('decay'), g=cv.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  var bars=[], anim=0, animRAF=null;
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function drawChart(){
+    var W=cv.clientWidth, H=210;
+    if (cv.width!==W*DPR){ cv.width=W*DPR; cv.height=H*DPR; }
+    cv.style.height=H+'px';
+    g.setTransform(DPR,0,0,DPR,0,0);
+    g.clearRect(0,0,W,H);
+    if(!bars.length) return;
+
+    var padB=42, padT=26, n=bars.length;
+    var gap=8, bw=(W-gap*(n-1))/n;
+    var max=bars[0].v || 1;
+
+    bars.forEach(function(b,i){
+      var full=(H-padB-padT)*(b.v/max);
+      var h=full*anim;
+      var x=i*(bw+gap), y=H-padB-h;
+      var grad=g.createLinearGradient(0,y,0,y+h);
+      if(i===0){ grad.addColorStop(0,'#E8C878'); grad.addColorStop(1,'#D9A441'); }
+      else {
+        var f=i/(n-1);
+        grad.addColorStop(0,'rgba(217,164,65,'+(0.75-0.45*f)+')');
+        grad.addColorStop(1,'rgba(200,64,47,'+(0.30+0.35*f)+')');
+      }
+      g.fillStyle=grad;
+      g.beginPath(); g.roundRect(x,y,bw,Math.max(h,2),6); g.fill();
+      /* value */
+      g.fillStyle = i===0 ? '#F5F2EA' : '#8A8580';
+      g.font = (i===0?'800 ':'700 ')+'11px system-ui,sans-serif';
+      g.textAlign='center';
+      g.fillText(fmt(b.v), x+bw/2, y-8);
+      /* label */
+      g.fillStyle = i===0 ? '#D9A441' : '#8A8580';
+      g.font='700 9.5px system-ui,sans-serif';
+      g.fillText(b.l1, x+bw/2, H-padB+16);
+      if(b.l2){ g.fillStyle='rgba(138,133,128,.75)';
+        g.fillText(b.l2, x+bw/2, H-padB+29); }
+    });
+    /* baseline */
+    g.strokeStyle='rgba(245,242,234,.1)'; g.lineWidth=1;
+    g.beginPath(); g.moveTo(0,H-padB+.5); g.lineTo(W,H-padB+.5); g.stroke();
+  }
+
+  function animate(){
+    if(animRAF) cancelAnimationFrame(animRAF);
+    if(reduced){ anim=1; drawChart(); return; }
+    anim=0;
+    (function step(){
+      anim += (1-anim)*0.12 + 0.008;
+      if(anim>=1){ anim=1; drawChart(); return; }
+      drawChart(); animRAF=requestAnimationFrame(step);
+    })();
+  }
+
+  /* ------------------------------------------------------- calculate */
+  function render(animateBars){
+    var idx=parseInt($('net').value,10);
+    var todayCpus=STEPS[idx];
+    $('netLab').textContent = todayCpus.toLocaleString('en-US') +
+      (todayCpus===1 ? ' CPU (just you)' : ' CPUs');
+
+    var my=myHash();
+    var finalCpus=Math.min(todayCpus*10, 100000);
+    var daysLeft=Math.max(1,(C.halving - C.height)/C.blocksPerDay);
+
+    var marks=[0,91,182,273,365];
+    var vals=marks.map(function(d){ return earned(d,daysLeft,my,todayCpus,finalCpus); });
+
+    bars=[
+      {v:vals[0], l1:'TODAY',   l2:''},
+      {v:vals[1], l1:'+3',      l2:'MONTHS'},
+      {v:vals[2], l1:'+6',      l2:'MONTHS'},
+      {v:vals[3], l1:'+9',      l2:'MONTHS'},
+      {v:vals[4], l1:'+1',      l2:'YEAR'}
+    ];
+    if(animateBars) animate(); else drawChart();
+
+    var loss=vals[0]-vals[4];
+    var pct = vals[0] > 0 ? Math.round(100*loss/vals[0]) : 0;
+    $('lossV').innerHTML = fmt(loss)+'<span class="u"> MBITE</span>';
+    $('lossSub').textContent = 'You would mine '+fmt(vals[0])+
+      ' MBITE starting today — only '+fmt(vals[4])+' starting a year from now.';
+    $('lossPct').textContent = '−'+pct+'% for waiting';
+
+    $('rows').innerHTML = [
+      ['Start today', vals[0], null, true],
+      ['In 6 months', vals[2], Math.round(100-100*vals[2]/vals[0]), false],
+      ['In 1 year',   vals[4], pct, false]
+    ].map(function(r){
+      return '<div class="row'+(r[3]?' now':'')+'">'+
+        '<div class="when">'+r[0]+'</div>'+
+        '<div class="amt num">'+fmt(r[1])+'</div>'+
+        '<div class="pen">'+(r[2]===null?'':'−'+r[2]+'%')+'</div></div>';
+    }).join('');
+
+    window.__calc={ today:vals[0], year:vals[4], loss:loss, pct:pct, cpus:todayCpus };
+  }
+
+  $('hw').addEventListener('change', function(){
+    $('hwCustom').style.display = this.value==='custom' ? 'block' : 'none';
+    render(true);
+  });
+  $('hwCustom').addEventListener('input', function(){ render(false); });
+  $('net').addEventListener('input', function(){ render(false); });
+  $('net').addEventListener('change', function(){ render(true); });
+  addEventListener('resize', function(){ drawChart(); });
+  render(true);
+
+  /* ------------------------------------------------------ share card */
+  function shareText(){
+    var c=window.__calc; if(!c) return '';
+    return 'Waiting one year to start mining MoonBite costs me '+fmt(c.loss)+
+      ' MBITE — '+c.pct+'% of what I would have. Being early is the whole game. moonbite.org/calculator';
+  }
+  $('btnCard').addEventListener('click', function(){
+    var c=window.__calc; if(!c) return;
+    if (navigator.share){ navigator.share({text:shareText()}).catch(function(){}); }
+    else { copyText(shareText()); toast('Copied'); }
+    var cv2=$('card'), x=cv2.getContext('2d');
+    var bg=x.createLinearGradient(0,0,0,1080);
+    bg.addColorStop(0,'#0B0D12'); bg.addColorStop(1,'#161A22');
+    x.fillStyle=bg; x.fillRect(0,0,1080,1080);
+    for(var i=0;i<80;i++){ x.globalAlpha=.12+Math.random()*.45; x.fillStyle='#F5F2EA';
+      x.beginPath(); x.arc(Math.random()*1080,Math.random()*1080,Math.random()*1.8+.4,0,6.2832); x.fill(); }
+    x.globalAlpha=1; x.textAlign='center';
+    x.beginPath(); x.arc(540,168,72,0,6.2832); x.fillStyle='#F5F2EA'; x.fill();
+    x.beginPath(); x.arc(579,113,56,0,6.2832); x.fillStyle='#0B0D12'; x.fill();
+    x.fillStyle='#D9A441';
+    x.beginPath(); x.roundRect(430,143,220,9,4.5); x.fill();
+    x.beginPath(); x.roundRect(437,182,206,9,4.5); x.fill();
+    x.fillStyle='#8A8580'; x.font='700 30px Arial';
+    x.fillText('THE COST OF WAITING', 540, 300);
+    x.fillStyle='#C8402F'; x.font='800 116px Arial';
+    x.fillText('−'+fmt(c.loss), 540, 430);
+    x.fillStyle='#F5F2EA'; x.font='800 44px Arial';
+    x.fillText('MBITE', 540, 486);
+    x.fillStyle='#F5F2EA'; x.font='400 36px Arial';
+    x.fillText('is what one year of waiting costs me.', 540, 578);
+    x.fillStyle='#8A8580'; x.font='400 32px Arial';
+    x.fillText(fmt(c.today)+' MBITE if I start today', 540, 640);
+    x.fillText('only '+fmt(c.year)+' if I start next year', 540, 688);
+    x.fillStyle='#D9A441'; x.font='800 52px Arial';
+    x.fillText('−'+c.pct+'%', 540, 780);
+    x.fillStyle='#F5F2EA'; x.font='italic 34px Arial';
+    x.fillText('Being early is the whole game.', 540, 862);
+    x.fillStyle='#D9A441'; x.font='700 30px Arial';
+    x.fillText('moonbite.org/calculator', 540, 938);
+    x.fillStyle='rgba(245,242,234,.32)'; x.font='400 19px Arial';
+    x.fillText('Estimate in MBITE only. Not an investment. Nothing is guaranteed.', 540, 1002);
+    var a=document.createElement('a');
+    a.download='moonbite-cost-of-waiting.png';
+    a.href=cv2.toDataURL('image/png'); a.click();
+  });
+})();
+</script>
+</body>
+</html>

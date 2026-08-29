@@ -1,0 +1,2897 @@
+<!-- Cache Buster: 2026-08-14T22:00:00Z -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#0B0D12">
+    <meta name="description" content="MoonBite Wallet - Secure cryptocurrency wallet for MBITE tokens">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MoonBite">
+    <meta name="application-name" content="MoonBite Wallet">
+    <link rel="manifest" href="/wallet-manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a4d7a' width='180' height='180'/><circle cx='90' cy='90' r='60' fill='%23ff6b35' opacity='0.3'/><path d='M90 40 Q110 60 110 90 Q110 120 90 140 Q70 120 70 90 Q70 60 90 40' fill='%23ffd700'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a4d7a' width='100' height='100' rx='20'/><circle cx='50' cy='50' r='40' fill='%23ff6b35' opacity='0.3'/><path d='M50 20 Q65 35 65 50 Q65 65 50 80 Q35 65 35 50 Q35 35 50 20' fill='%23ffd700'/></svg>">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;">
+    <title>MoonBite Wallet</title>
+    <link rel="stylesheet" href="/static/fonts/moonbite-fonts.css">
+<style>
+/* Doc 04: three roles. A heavy grotesque for display, a quiet sans for
+   reading, a monospace for anything that is a number.
+
+   Archivo Black and Inter are self-hosted from /static/fonts (latin subset,
+   OFL-licensed). They are deliberately not loaded from Google Fonts: /privacy
+   states the site loads nothing that phones home, and a webfont CDN sends
+   every visitor's IP to Google on every page load. Every figure that is
+   money, a hash, an address or a block height is monospace with tabular
+   figures — amounts that shift width as they update look untrustworthy. */
+:root{
+  --font-display:'Archivo Black','Helvetica Neue','Arial Black',sans-serif;
+  --font-body:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --font-data:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
+  font-family:var(--font-display); font-weight:400; letter-spacing:-.02em;
+}
+.num,.mono,.addr,.cert .amt,.cl .v,.tot .v,.mcell .v,.odds .v,
+.loss .v,.count .v,.zero-band .v,.total .v,.vault-v,td.n,th.n{
+  font-family:var(--font-data); font-variant-numeric:tabular-nums;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            /* MoonBite Reserve Palette. The wallet is variable-driven, so
+               rebranding it is a token swap rather than a rewrite — the right
+               trade for a surface that holds private keys. Legacy names
+               (--gold, --fire-orange, --secondary) are kept and remapped so
+               every existing rule inherits the new brand untouched. */
+            --primary: #D9A441;
+            --primary-dark: #B8863B;
+            --secondary: #B8863B;
+            --success: #2E9E6B;
+            --danger: #C8402F;
+            --warning: #D9A441;
+
+            --fire-orange: #B8863B;
+            --gold: #D9A441;
+            --emerald: #2E9E6B;
+            --slate: #161A22;
+
+            /* Dark (the only mode the brand ships) */
+            --bg-primary: #0B0D12;
+            --bg-secondary: #161A22;
+            --bg-tertiary: #232833;
+            --text-primary: #F5F2EA;
+            --text-secondary: #8A8580;
+            --text-tertiary: #6E6A66;
+            --border-color: rgba(217, 164, 65, 0.14);
+            --card-bg: rgba(22, 26, 34, 0.6);
+
+            /* Light Mode */
+            --bg-primary-light: #F5F2EA;
+            --bg-secondary-light: #EFEBE1;
+            --bg-tertiary-light: #E5E0D4;
+            --text-primary-light: #0B0D12;
+            --text-secondary-light: #6E6A66;
+            --text-tertiary-light: #8A8580;
+            --border-color-light: #D8D2C4;
+            --card-bg-light: #EFEBE1;
+
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        /* Light Theme */
+        html[data-theme="light"] {
+            --bg-primary: var(--bg-primary-light);
+            --bg-secondary: var(--bg-secondary-light);
+            --bg-tertiary: var(--bg-tertiary-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --text-tertiary: var(--text-tertiary-light);
+            --border-color: var(--border-color-light);
+            --card-bg: var(--card-bg-light);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: fixed;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4);
+        }
+
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            max-width: 428px;
+            margin: 0 auto;
+            background: var(--dark-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Premium Top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px var(--spacing-md);
+            background: linear-gradient(180deg, rgba(26, 77, 122, 0.3) 0%, rgba(26, 77, 122, 0.1) 100%);
+            border-bottom: 1px solid rgba(184, 134, 59, 0.2);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+
+        .top-bar.premium-header {
+            padding: 8px var(--spacing-md);
+            background: linear-gradient(135deg, rgba(26, 77, 122, 0.4) 0%, rgba(184, 134, 59, 0.1) 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(184, 134, 59, 0.4));
+            transition: transform 0.3s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--gold);
+            font-size: 24px;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn.hidden {
+            visibility: hidden;
+        }
+
+        .top-bar-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .top-bar-right {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--fire-orange);
+            font-size: 20px;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main content area */
+        .screens-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none !important;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            opacity: 0 !important;
+            transform: translateX(100%) !important;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            padding-bottom: 80px;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            z-index: 1;
+        }
+
+        .screen.active {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            z-index: 10;
+        }
+
+        .screen.prev {
+            transform: translateX(-100%) !important;
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 428px;
+            margin: 0 auto;
+            background: rgba(26, 77, 122, 0.15);
+            border-top: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: var(--spacing-sm) 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px var(--spacing-sm);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        /* Screens styling - Luxury Edition */
+        .screen-header {
+            padding: var(--spacing-lg) var(--spacing-md);
+            text-align: center;
+            background: linear-gradient(180deg, rgba(26, 31, 58, 0.4) 0%, rgba(21, 26, 47, 0.2) 100%);
+            border-bottom: 1px solid rgba(217, 164, 65, 0.08);
+        }
+
+        .screen-header h1 {
+            font-size: 26px;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .screen-header p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            letter-spacing: 0.2px;
+            font-weight: 400;
+        }
+
+        .screen-content {
+            flex: 1;
+            padding: var(--spacing-lg) var(--spacing-md);
+            overflow-y: auto;
+        }
+
+        /* Cards */
+        .card {
+            background: linear-gradient(135deg, rgba(26, 77, 122, 0.15), rgba(184, 134, 59, 0.05));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-size: 24px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Luxury Premium Balance Card - God-Level Edition */
+        .premium-balance-card {
+            position: relative;
+            border-radius: 24px;
+            padding: 22px;
+            margin-bottom: 18px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            /* Slate is the surface for panels; Moongold is an accent, not a
+               background. A gold slab reads as a memecoin — the brand's own
+               rule is restraint. */
+            background: linear-gradient(168deg, #1F242F 0%, #161A22 55%, #151921 100%);
+            border: 1px solid rgba(217,164,65,.20);
+            box-shadow: 0 24px 60px rgba(0,0,0,.55);
+        }
+        /* The only gold on the card besides the mark: one hairline along the top. */
+        .premium-balance-card::before {
+            content: '';
+            position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+            background: linear-gradient(90deg, rgba(217,164,65,0), #D9A441 42%, rgba(217,164,65,0));
+        }
+        .vault-top { display: flex; align-items: center; justify-content: space-between; }
+        .vault-brand { display: flex; align-items: center; gap: 9px; color: #F5F2EA;
+            font-weight: 800; font-size: .68rem; letter-spacing: .3em; }
+        .vault-net { font-size: .54rem; letter-spacing: .2em; font-weight: 800; color: #8A8580;
+            border: 1px solid rgba(138,133,128,.35); padding: 4px 9px; border-radius: 999px; }
+        .vault-mid { margin: 4px 0; }
+        .balance-label { font-size: .56rem; letter-spacing: .24em; text-transform: uppercase;
+            font-weight: 800; color: #8A8580; }
+        .balance-amount { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: clamp(1.9rem, 9vw, 2.7rem); font-weight: 800;
+            line-height: 1; letter-spacing: -.035em; margin-top: 10px; color: #F5F2EA;
+            font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 10px; }
+        /* Doc 02: the glyph sets on the baseline at cap height and takes the colour
+           of surrounding text, except the struck bars which stay Moongold. */
+        .mbite-glyph { height: .58em; width: auto; color: #F5F2EA; flex: none;
+            position: relative; top: .02em; }
+        .vault-sub { font-size: .74rem; font-weight: 700; color: #8A8580; margin-top: 9px;
+            letter-spacing: .04em; }
+        .vault-bottom { display: flex; justify-content: space-between; align-items: flex-end;
+            border-top: 1px solid rgba(245,242,234,.07); padding-top: 14px; }
+        .vault-k { font-size: .5rem; letter-spacing: .2em; text-transform: uppercase;
+            font-weight: 800; color: #8A8580; }
+        .vault-v { font-size: .84rem; font-weight: 800; letter-spacing: .08em; margin-top: 4px;
+            color: #F5F2EA; }
+        .dash-content { padding-top: 16px; }
+
+        @keyframes cardViral {
+            0%, 100% { box-shadow: 0 30px 100px rgba(0, 51, 166, 0.4), 0 0 80px rgba(184, 134, 59, 0.3), inset 0 1px 20px rgba(255, 255, 255, 0.15); }
+            50% { box-shadow: 0 40px 120px rgba(0, 51, 166, 0.5), 0 0 100px rgba(184, 134, 59, 0.4), inset 0 1px 20px rgba(255, 255, 255, 0.2); }
+        }
+
+        .premium-balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(217, 164, 65, 0.1) 50%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatViral1 6s ease-in-out infinite;
+        }
+
+        @keyframes floatViral1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        .premium-balance-card::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(184, 134, 59, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatViral2 8s ease-in-out infinite;
+        }
+
+        @keyframes floatViral2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 20px) scale(1.1); }
+        }
+
+        html[data-theme="light"] .premium-balance-card {
+            background: linear-gradient(168deg, #FFFFFF 0%, #EFEBE1 100%);
+            border-color: rgba(217,164,65,.35);
+        }
+        html[data-theme="light"] .balance-amount,
+        html[data-theme="light"] .vault-v,
+        html[data-theme="light"] .vault-brand { color: #0B0D12; }
+
+
+        /* superseded by the vault card rule above */
+
+        @keyframes balancePulse {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.03) translateY(-2px); }
+        }
+
+        .balance-unit {
+            font-size: 22px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        html[data-theme="light"] .balance-label,
+        html[data-theme="light"] .balance-amount,
+
+        .card-logo-img {
+            height: 24px;
+            width: auto;
+            filter: drop-shadow(0 2px 6px rgba(255, 214, 0, 0.3));
+        }
+
+        .premium-wallet-card {
+            background: linear-gradient(135deg, rgba(255, 214, 0, 0.1) 0%, rgba(184, 134, 59, 0.08) 100%);
+            border: 1px solid rgba(255, 214, 0, 0.3);
+            border-radius: 16px;
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            box-shadow: 0 8px 24px rgba(255, 214, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .wallet-icon {
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255, 214, 0, 0.3), rgba(184, 134, 59, 0.2));
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 214, 0, 0.2);
+        }
+
+        .wallet-details {
+            flex: 1;
+        }
+
+        .wallet-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .wallet-name-display {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .wallet-amount {
+            font-size: 15px;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .action-btn {
+            flex: 1;
+            background: rgba(22,26,34,.9);
+            border: 1px solid rgba(217,164,65,.22);
+            border-radius: 16px;
+            padding: 15px 8px;
+            color: #F5F2EA;
+            font-weight: 700;
+            font-size: .68rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            min-height: 68px;
+            transition: border-color .2s ease, transform .15s ease;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 214, 0, 0.15), transparent);
+            transition: left 0.4s ease;
+            pointer-events: none;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 214, 0, 0.18) 0%, rgba(184, 134, 59, 0.12) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(255, 214, 0, 0.15),
+                        0 0 20px rgba(184, 134, 59, 0.1);
+            border-color: rgba(255, 214, 0, 0.35);
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn svg {
+            width: 24px;
+            height: 24px;
+            color: var(--gold);
+        }
+
+        .premium-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px var(--spacing-md);
+            background: rgba(26, 77, 122, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--fire-orange);
+            background: rgba(26, 77, 122, 0.15);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px var(--spacing-md);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            /* The one gold fill per screen — this is what 'sparingly' buys you. */
+            background: #D9A441;
+            color: #0B0D12;
+            width: 100%;
+            margin-top: var(--spacing-md);
+            box-shadow: 0 12px 30px rgba(184, 134, 59, 0.25);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(184, 134, 59, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.95;
+        }
+
+        .btn-secondary {
+            background: rgba(26, 31, 58, 0.4);
+            color: var(--gold);
+            border: 1px solid rgba(217, 164, 65, 0.25);
+            width: 100%;
+            margin-top: var(--spacing-sm);
+        }
+
+        .btn-small {
+            padding: 8px var(--spacing-md);
+            font-size: 12px;
+            width: auto;
+        }
+
+        /* Wallet address display */
+        .address-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            color: var(--gold);
+            word-break: break-all;
+            margin: var(--spacing-md) 0;
+        }
+
+        /* QR Code */
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(184, 134, 59, 0.2), rgba(217, 164, 65, 0.2));
+            border: 2px solid var(--fire-orange);
+            border-radius: 12px;
+            margin: var(--spacing-lg) auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 48px;
+        }
+
+        /* Toggles */
+        .toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: rgba(26, 77, 122, 0.3);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, var(--fire-orange), #B8863B);
+            border-color: var(--fire-orange);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 12px;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* Seed phrase grid */
+        .seed-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+        }
+
+        .seed-item {
+            background: rgba(26, 77, 122, 0.1);
+            border: 1px solid var(--fire-orange);
+            border-radius: 8px;
+            padding: var(--spacing-md);
+            text-align: center;
+        }
+
+        .seed-number {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .seed-word {
+            font-size: 16px;
+            color: var(--gold);
+            font-weight: 600;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        /* Install prompt */
+        .install-prompt {
+            background: linear-gradient(135deg, var(--fire-orange), #B8863B);
+            padding: var(--spacing-md);
+            border-radius: 12px;
+            margin-bottom: var(--spacing-md);
+            color: white;
+            text-align: center;
+            display: none;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            font-size: 14px;
+        }
+
+        .install-prompt-text {
+            font-size: 12px;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.9;
+        }
+
+        .install-prompt-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+        }
+
+        .install-prompt-btn {
+            padding: 8px var(--spacing-md);
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .install-prompt-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Wallet list - Luxury Style */
+        .wallet-item {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.5) 0%, rgba(21, 26, 47, 0.3) 100%);
+            border: 1px solid rgba(217, 164, 65, 0.12);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: var(--spacing-md);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .wallet-item:hover {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.7) 0%, rgba(21, 26, 47, 0.5) 100%);
+            border-color: rgba(217, 164, 65, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .wallet-item:active {
+            transform: scale(0.98);
+            border-color: var(--fire-orange);
+        }
+
+        .wallet-name {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .wallet-balance {
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .wallet-usd {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Contact list */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--fire-orange), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-bg);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .contact-address {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Success state */
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: conic-gradient(from 0deg, var(--fire-orange), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: var(--spacing-xl) auto;
+            font-size: 40px;
+        }
+
+        /* Scroll behavior */
+        .screen-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .screen-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .screen-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .top-bar {
+                padding: 8px var(--spacing-md);
+            }
+
+            .screen-header {
+                padding: var(--spacing-md);
+            }
+
+            .screen-header h1 {
+                font-size: 20px;
+            }
+
+            .screen-content {
+                padding: var(--spacing-md);
+            }
+        }
+
+        /* Onboarding Animations */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes scanPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes pinPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Premium Top Bar with Logo -->
+        <div class="top-bar premium-header">
+            <div class="top-bar-left">
+                <button class="back-btn" id="backBtn" title="Go back">←</button>
+                <div class="logo-brand">
+                    <img src="/static/moonbite-logo.svg" alt="MoonBite" class="header-logo" loading="eager">
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <button class="icon-btn premium-icon" id="notificationBtn" title="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn premium-icon" id="settingsBtn" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m2.12 2.12l4.24 4.24M1 12h6m6 0h6m-16.78 7.78l4.24-4.24m2.12-2.12l4.24-4.24"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Screens Container - Onboarding Enabled -->
+        <div class="screens-container">
+            <!-- 6-Digit PIN Setup Screen - ONE TIME ONLY -->
+            <div class="screen" id="pinSetupScreen">
+                <div class="screen-header">
+                    <h1>🔐 Create PIN</h1>
+                    <p>Secure your wallet</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg); overflow-y: auto;">
+                    <div style="text-align: center; width: 100%; max-width: 400px;">
+                        <!-- STEP 1: ENTER PIN -->
+                        <div id="pinCreateStep" style="display: block;">
+                            <div style="font-size: 60px; margin-bottom: var(--spacing-lg);">🔑</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Enter a 6-digit PIN to secure your wallet</p>
+
+                            <label class="form-label" style="margin-bottom: var(--spacing-md); display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Create PIN</label>
+                            <div style="display: flex; gap: var(--spacing-md); justify-content: center; margin-bottom: var(--spacing-xl);">
+                                <input type="text" class="form-input" id="pinDigit1" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinDigit2')">
+                                <input type="text" class="form-input" id="pinDigit2" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinDigit3')">
+                                <input type="text" class="form-input" id="pinDigit3" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinDigit4')">
+                                <input type="text" class="form-input" id="pinDigit4" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinDigit5')">
+                                <input type="text" class="form-input" id="pinDigit5" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinDigit6')">
+                                <input type="text" class="form-input" id="pinDigit6" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="handlePinNext()">
+                            </div>
+
+                            <button class="btn btn-primary" onclick="proceedToConfirmPin()" style="width: 100%;">Next → Confirm PIN</button>
+                        </div>
+
+                        <!-- STEP 2: CONFIRM PIN -->
+                        <div id="pinConfirmStep" style="display: none;">
+                            <div style="font-size: 60px; margin-bottom: var(--spacing-lg);">✓</div>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 14px;">Confirm your PIN to ensure it's correct</p>
+
+                            <label class="form-label" style="margin-bottom: var(--spacing-md); display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Confirm PIN</label>
+                            <div style="display: flex; gap: var(--spacing-md); justify-content: center; margin-bottom: var(--spacing-xl);">
+                                <input type="text" class="form-input" id="pinConfirm1" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinConfirm2')">
+                                <input type="text" class="form-input" id="pinConfirm2" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinConfirm3')">
+                                <input type="text" class="form-input" id="pinConfirm3" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinConfirm4')">
+                                <input type="text" class="form-input" id="pinConfirm4" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinConfirm5')">
+                                <input type="text" class="form-input" id="pinConfirm5" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="movePinFocus(this, 'pinConfirm6')">
+                                <input type="text" class="form-input" id="pinConfirm6" maxlength="1" style="width: 50px; height: 50px; text-align: center; font-size: 24px; font-weight: bold;" placeholder="•" onkeyup="handlePinConfirmComplete()">
+                            </div>
+
+                            <div id="pinMismatchError" style="color: #C8402F; font-size: 12px; margin-bottom: var(--spacing-md); display: none;">PINs do not match. Please try again.</div>
+
+                            <button class="btn btn-primary" onclick="saveSetupPINAndContinue()" style="width: 100%;">✓ Save PIN & Continue</button>
+                            <button class="btn btn-secondary" onclick="backToCreatePin()" style="width: 100%; margin-top: var(--spacing-md);">← Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIN Verification Screen (For Returning Users) - BIOMETRIC FIRST -->
+            <div class="screen" id="pinVerifyScreen">
+                <div class="screen-header">
+                    <h1>🔓 Welcome Back</h1>
+                    <p>Quick login</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-xl); padding: var(--spacing-xl) var(--spacing-lg);">
+                    <div style="font-size: 80px;">👋</div>
+
+                    <!-- BIOMETRIC/PASSKEY FIRST (Primary Option) -->
+                    <div style="width: 100%; max-width: 300px;">
+                        <button class="btn btn-primary" onclick="tryBiometricLogin()" style="width: 100%; padding: 16px; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span>👆 Use Fingerprint/Face ID</span>
+                        </button>
+                    </div>
+
+                    <div style="color: var(--text-secondary); font-size: 13px;">OR</div>
+
+                    <!-- PIN FALLBACK (Secondary Option) -->
+                    <div style="width: 100%; max-width: 300px; text-align: center;">
+                        <button class="btn btn-secondary" onclick="showPINFallback()" style="width: 100%; padding: 12px;">Use PIN Instead</button>
+                    </div>
+
+                    <!-- PIN INPUT (Hidden until clicked) -->
+                    <div id="pinFallbackArea" style="width: 100%; max-width: 300px; display: none;">
+                        <label class="form-label" style="margin-bottom: var(--spacing-md); display: block; color: var(--text-secondary); font-size: 13px;">Enter your PIN</label>
+                        <div style="display: flex; gap: 8px; justify-content: center; margin-bottom: var(--spacing-lg);">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin0" onkeyup="movePinFocus(this, 'verifyPin1')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin1" onkeyup="movePinFocus(this, 'verifyPin2')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin2" onkeyup="movePinFocus(this, 'verifyPin3')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin3" onkeyup="movePinFocus(this, 'verifyPin4')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin4" onkeyup="movePinFocus(this, 'verifyPin5')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="verifyPin5" onkeyup="handlePinFallbackComplete()">
+                        </div>
+                        <div id="pinVerifyError" style="color: #C8402F; font-size: 13px; display: none; text-align: center; margin-bottom: var(--spacing-md);">Incorrect PIN. Please try again.</div>
+                        <button class="btn btn-primary" onclick="verifyPINAndLogin()" style="width: 100%;">Unlock Wallet →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Setup Screen -->
+            <div class="screen" id="walletSetupScreen">
+                <div class="screen-header">
+                    <h1>💰 Wallet Setup</h1>
+                    <p>Create your new Wallet or import using a seed phrase if you already have an account</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg); text-align: center;">
+                    <div style="width: 150px; height: 150px; background: linear-gradient(135deg, var(--fire-orange), var(--gold)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 80px; box-shadow: 0 10px 40px rgba(184, 134, 59, 0.3);">💼</div>
+                    <div>
+                        <h3 style="color: var(--gold); margin-bottom: var(--spacing-md);">Get Started</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">Choose how you'd like to set up your MoonBite wallet</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showScreen('createWalletScreen')" style="width: 100%; max-width: 300px;">✨ Create a New Wallet</button>
+                    <button class="btn btn-secondary" onclick="showScreen('importSeedScreen')" style="width: 100%; max-width: 300px;">📥 Import Using Seed Phrase</button>
+                </div>
+            </div>
+
+            <!-- Create Wallet Screen -->
+            <div class="screen" id="createWalletScreen">
+                <div class="screen-header">
+                    <h1>✨ Create Wallet</h1>
+                    <p>Generate new wallet and seed phrase</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card">
+                        <div class="card-title">New Wallet Address</div>
+                        <div class="card-value" style="word-break: break-all; font-size: 14px;">MJX9vNr8Yj5Zq4Kp2Lm8Wn5Hs7Dg3Fx</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Wallet Name</label>
+                        <input type="text" class="form-input" placeholder="e.g., My First Wallet" value="MoonBite Wallet 1">
+                    </div>
+                    <div class="card" style="background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.3);">
+                        <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
+                            <span style="font-size: 20px;">ℹ️</span>
+                            <div>
+                                <div style="color: var(--success); font-weight: 600; margin-bottom: var(--spacing-sm);">Save Your Seed Phrase</div>
+                                <div style="color: var(--text-secondary); font-size: 12px;">Write down your 12-word seed phrase in a safe place. You'll need it to recover your wallet.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showScreen('seedPhraseScreen')" style="width: 100%;">View Seed Phrase →</button>
+                    <button class="btn btn-secondary" onclick="showScreen('passwordScreen')" style="width: 100%;">Skip for now</button>
+                </div>
+            </div>
+
+            <!-- Seed Phrase Display Screen -->
+            <div class="screen" id="seedPhraseScreen">
+                <div class="screen-header">
+                    <h1>🔑 Your Seed Phrase</h1>
+                    <p>Keep this safe and never share it</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card" style="background: rgba(184, 134, 59, 0.1); border-color: rgba(184, 134, 59, 0.3);">
+                        <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
+                            <span style="font-size: 20px;">⚠️</span>
+                            <div>
+                                <div style="color: var(--fire-orange); font-weight: 600; margin-bottom: var(--spacing-sm);">Critical Information</div>
+                                <div style="color: var(--text-secondary); font-size: 12px;">Anyone with this phrase can access your funds. Write it down on paper. Never screenshot it, never store it in the cloud, and never type it into any site.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: var(--spacing-lg);">
+                        <div class="card-title">12-Word Seed Phrase</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-top: var(--spacing-md);">
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">1.</span> mineral</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">2.</span> swift</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">3.</span> option</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">4.</span> stale</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">5.</span> harbor</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">6.</span> pearl</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">7.</span> space</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">8.</span> bench</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">9.</span> payment</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">10.</span> bomb</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">11.</span> hail</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">12.</span> motes</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="copySeedPhrase()" style="width: 100%; margin-top: var(--spacing-lg);">📋 Copy All Words</button>
+                    <button class="btn btn-secondary" onclick="showScreen('passwordScreen')" style="width: 100%;">Next: Set Password →</button>
+                </div>
+            </div>
+
+            <!-- Import From Seed Screen -->
+            <div class="screen" id="importSeedScreen">
+                <div class="screen-header">
+                    <h1>📥 Import From Seed</h1>
+                    <p>Recover your wallet using seed phrase</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">Seed Phrase</label>
+                        <textarea class="form-input" placeholder="mineral swift option stale harbor pearl space bench payment bomb hail motes" style="height: 100px; resize: none;"
+                              autocomplete="off" autocorrect="off" autocapitalize="off"
+                              spellcheck="false" data-lpignore="true" data-1p-ignore></textarea>
+                        <div style="color: var(--text-secondary); font-size: 12px; margin-top: var(--spacing-sm);">Enter your 12 or 24-word seed phrase</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Wallet Name</label>
+                        <input type="text" class="form-input" placeholder="e.g., My Imported Wallet">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('passwordScreen')" style="width: 100%;">Continue →</button>
+                    <button class="btn btn-secondary" onclick="showScreen('walletSetupScreen')" style="width: 100%; margin-top: var(--spacing-md);">Back</button>
+                </div>
+            </div>
+
+            <!-- Secure Your Wallet Screen -->
+            <div class="screen" id="secureWalletScreen">
+                <div class="screen-header">
+                    <h1>🔐 Secure Your Wallet</h1>
+                    <p>Protect your funds with security setup</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg);">
+                    <div style="width: 180px; height: 180px; background: linear-gradient(135deg, #2E9E6B, #25845A); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);">🔐</div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--text-primary); margin-bottom: var(--spacing-sm);">Secure Your Wallet</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: var(--spacing-lg);">Don't risk losing your funds. Protect your wallet by saving your seed phrase in a place you trust.</p>
+                        <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                            <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">It's the only way to recover your wallet if you get locked out of the app or get a new device.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showScreen('seedPhraseScreen')" style="width: 100%; max-width: 300px;">Start</button>
+                    <button class="btn btn-secondary" onclick="showScreen('passwordScreen')" style="width: 100%; max-width: 300px;">Remind me later</button>
+                </div>
+            </div>
+
+            <!-- Password Setup Screen - Enhanced -->
+            <div class="screen" id="passwordScreen">
+                <div class="screen-header">
+                    <h1>🔒 Create Password</h1>
+                    <p>This password will unlock your Oneta wallet only on this device.</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <div style="position: relative;">
+                            <input type="password" autocomplete="off" data-lpignore="true" data-1p-ignore class="form-input" placeholder="Password" id="passwordInput" onchange="updatePasswordStrength()">
+                            <button style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px;" onclick="togglePasswordVisibility('passwordInput')">👁️</button>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 12px; margin-top: var(--spacing-sm);">Must be at least 8 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm New Password</label>
+                        <div style="position: relative;">
+                            <input type="password" autocomplete="off" data-lpignore="true" data-1p-ignore class="form-input" placeholder="Password" id="confirmPasswordInput">
+                            <button style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px;" onclick="togglePasswordVisibility('confirmPasswordInput')">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Password Strength</div>
+                        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                            <div id="strengthBar1" style="flex: 1; height: 8px; background: var(--success); border-radius: 4px;"></div>
+                            <div id="strengthBar2" style="flex: 1; height: 8px; background: rgba(74, 222, 128, 0.3); border-radius: 4px;"></div>
+                            <div id="strengthBar3" style="flex: 1; height: 8px; background: rgba(74, 222, 128, 0.3); border-radius: 4px;"></div>
+                            <div id="strengthBar4" style="flex: 1; height: 8px; background: rgba(74, 222, 128, 0.3); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Password Requirements</div>
+                        <div style="margin-top: var(--spacing-md);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span> At least 8 characters
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span> Contains uppercase letter
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span> Contains number
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span> Contains special character
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: var(--spacing-lg);">
+                        <label style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); font-size: 14px; cursor: pointer;">
+                            <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span>Sign in with Face ID?</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="margin-top: var(--spacing-md);">
+                        <label style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--text-secondary); font-size: 12px; cursor: pointer;">
+                            <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;" required>
+                            <span>Sign in with Biometrics?</span>
+                        </label>
+                    </div>
+
+                    <div class="card" style="background: rgba(74, 222, 128, 0.05); border-color: rgba(74, 222, 128, 0.2); margin-top: var(--spacing-lg);">
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-md); cursor: pointer;">
+                            <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;" required>
+                            <div style="font-size: 13px; color: var(--text-secondary);">I understand that Oneta cannot recover this password for me. <span style="color: var(--success);">Learn more</span></div>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('secureWalletScreen')" style="width: 100%; margin-top: var(--spacing-lg);">Create Password</button>
+                </div>
+            </div>
+
+            <!-- Write Seed Phrase Screen -->
+            <div class="screen" id="writeSeedScreen">
+                <div class="screen-header">
+                    <h1>✍️ Write Down Seed Phrase</h1>
+                    <p>Write these 12 words in the same order in a safe place. You will need these words to restore your wallet.</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card" style="background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.3);">
+                        <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
+                            <span style="font-size: 20px;">✍️</span>
+                            <div>
+                                <div style="color: var(--success); font-weight: 600; margin-bottom: var(--spacing-sm);">Tip to never lose your seed phrase</div>
+                                <div style="color: var(--text-secondary); font-size: 12px;">Write down all 12 words and keep them in a safe place. You can also store a backup in a secure location.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: var(--spacing-lg);">
+                        <div class="card-title">12-Word Seed Phrase</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-top: var(--spacing-md);">
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">1.</span> mineral</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">2.</span> swift</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">3.</span> option</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">4.</span> stale</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">5.</span> harbor</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">6.</span> pearl</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">7.</span> space</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">8.</span> bench</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">9.</span> payment</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">10.</span> bomb</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">11.</span> hail</div>
+                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">12.</span> motes</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('confirmSeedScreen')" style="width: 100%; margin-top: var(--spacing-lg);">Next</button>
+                </div>
+            </div>
+
+            <!-- Confirm Seed Phrase Screen -->
+            <div class="screen" id="confirmSeedScreen">
+                <div class="screen-header">
+                    <h1>✅ Confirm Seed Phrase</h1>
+                    <p>Select the correct words to verify you've saved your seed phrase.</p>
+                </div>
+                <div class="screen-content">
+                    <div style="background: rgba(26, 77, 122, 0.2); border: 1px solid rgba(26, 77, 122, 0.4); border-radius: 12px; padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <div style="font-size: 14px; color: var(--text-secondary);">Confirm word: <span style="color: var(--gold); font-weight: 600;">6.</span></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-lg);">
+                        <button style="padding: var(--spacing-md); background: rgba(26, 77, 122, 0.3); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 14px;">mineral</button>
+                        <button style="padding: var(--spacing-md); background: rgba(26, 77, 122, 0.3); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 14px;">space</button>
+                        <button style="padding: var(--spacing-md); background: rgba(26, 77, 122, 0.3); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 14px;">pearl</button>
+                        <button style="padding: var(--spacing-md); background: rgba(26, 77, 122, 0.3); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); cursor: pointer; font-size: 14px;">bench</button>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('seedInfoScreen')" style="width: 100%;">Next</button>
+                </div>
+            </div>
+
+            <!-- Seed Phrase Info Screen -->
+            <div class="screen" id="seedInfoScreen">
+                <div class="screen-header">
+                    <h1>📚 What is a Seed Phrase?</h1>
+                    <p>Understanding your wallet recovery key</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: var(--spacing-md);">Definition</div>
+                        <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">A seed phrase is a set of twelve words that contains all the information about your wallet, including your funds. It is a secret code used to access your assets.</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: var(--spacing-md);">Security</div>
+                        <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">You must keep your seed phrase secret and safe. If someone gets your seed phrase, they will gain control over your accounts.</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: var(--spacing-md);">Recovery</div>
+                        <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">Save it in a place where you can access it. If you lose it, not even Oneta can help you recover it. It is the only way to access your wallet if you get locked out of the app or get a new device.</div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('skipSecurityScreen')" style="width: 100%; margin-top: var(--spacing-lg);">OK, I Got It</button>
+                </div>
+            </div>
+
+            <!-- Skip Account Security Screen -->
+            <div class="screen" id="skipSecurityScreen">
+                <div class="screen-header">
+                    <h1>⚠️ Skip Account Security?</h1>
+                    <p>Confirm wallet setup</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg);">
+                    <div style="width: 180px; height: 180px; background: linear-gradient(135deg, #2E9E6B, #25845A); border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 100px; box-shadow: 0 10px 40px rgba(34, 197, 94, 0.3);">✅</div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--text-primary); margin-bottom: var(--spacing-sm);">Successful</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: var(--spacing-lg);">Your wallet has been created. Make sure to save your seed phrase to keep your wallet accessible and protected.</p>
+                    </div>
+                    <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: var(--spacing-md); width: 100%;">
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-md); cursor: pointer;">
+                            <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;">
+                            <div style="font-size: 13px; color: var(--text-secondary);">I understand that if I lose my seed phrase I will not be able to access my wallet.</div>
+                        </label>
+                    </div>
+                    <button class="btn btn-primary" onclick="completeOnboarding()" style="width: 100%; max-width: 300px;">✅ Complete Setup</button>
+                </div>
+            </div>
+
+            <!-- Dashboard Screen -->
+            <div class="screen" id="dashboardScreen">
+                <div class="screen-content dash-content">
+                    <div class="install-prompt" id="installPrompt">
+                        <div class="install-prompt-title">📱 Install MoonBite App</div>
+                        <div class="install-prompt-text">Get faster access and offline support</div>
+                        <div class="install-prompt-buttons">
+                            <button class="install-prompt-btn" id="installBtn">Install</button>
+                            <button class="install-prompt-btn" id="dismissBtn">Later</button>
+                        </div>
+                    </div>
+
+                    <!-- The vault card -->
+                    <div class="premium-balance-card">
+                        <div class="vault-top">
+                            <div class="vault-brand">
+                                <svg class="brand-mark" viewBox="-140 -125 280 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="#F5F2EA"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg>
+                                <span>MOONBITE</span>
+                            </div>
+                            <div class="vault-net">MAINNET</div>
+                        </div>
+                        <div class="vault-mid">
+                            <div class="balance-label">Total balance</div>
+                            <div class="balance-amount">17.6912<svg class="mbite-glyph" viewBox="-140 -125 280 250" aria-label="MBITE" role="img"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="currentColor"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg></div>
+                            <div class="vault-sub" id="vaultSub">Mined, not bought</div>
+                        </div>
+                        <div class="vault-bottom">
+                            <div class="vault-holder">
+                                <div class="vault-k">Wallet</div>
+                                <div class="vault-v">WALLET 1</div>
+                            </div>
+                            <div class="vault-holder" style="text-align:right;">
+                                <div class="vault-k">Block height</div>
+                                <div class="vault-v num" id="vaultHeight">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-wallet-card">
+                        <div class="wallet-icon">👝</div>
+                        <div class="wallet-details">
+                            <div class="wallet-label">Primary Wallet</div>
+                            <div class="wallet-name-display">MoonBite Wallet 1</div>
+                            <div class="wallet-amount">5.1234 MBITE</div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="showScreen('walletsScreen')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="2" y="7" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path d="M2 10h20" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>Wallets</span>
+                        </button>
+                        <button class="action-btn" onclick="showScreen('sendScreen')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M7 17L17 7"></path>
+                                <path d="M7 7h10v10"></path>
+                            </svg>
+                            <span>Send</span>
+                        </button>
+                        <button class="action-btn" onclick="showScreen('receiveScreen')">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 7L7 17"></path>
+                                <path d="M17 17H7V7"></path>
+                            </svg>
+                            <span>Receive</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallets Screen -->
+            <div class="screen" id="walletsScreen">
+                <div class="screen-header">
+                    <h1>My Wallets</h1>
+                    <p>Manage your wallets</p>
+                </div>
+                <div class="screen-content">
+                    <div class="wallet-item">
+                        <div class="wallet-name">MoonBite Wallet 1</div>
+                        <div class="wallet-balance">5.1234 MBITE</div>
+                    </div>
+
+                    <div class="wallet-item">
+                        <div class="wallet-name">MoonBite Wallet 2</div>
+                        <div class="wallet-balance">2.5678 MBITE</div>
+                    </div>
+
+                    <div class="wallet-item">
+                        <div class="wallet-name">Trading Wallet</div>
+                        <div class="wallet-balance">10.0000 MBITE</div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('createWalletScreen')">➕ Create New Wallet</button>
+                </div>
+            </div>
+
+            <!-- QR Code Scanner Screen -->
+            <div class="screen" id="qrScannerScreen">
+                <div class="screen-header">
+                    <h1>🔍 Scan QR Code</h1>
+                    <p>Point your camera at the QR Code</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg);">
+                    <div style="width: 220px; height: 220px; background: linear-gradient(135deg, rgba(26, 77, 122, 0.3), rgba(184, 134, 59, 0.2)); border: 3px dashed var(--fire-orange); border-radius: 16px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 60px; margin-bottom: var(--spacing-md);">📷</div>
+                            <p style="color: var(--text-secondary); font-size: 13px;">Position QR code in frame</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: var(--spacing-lg); width: 100%; justify-content: center;">
+                        <button style="width: 50px; height: 50px; border-radius: 50%; background: var(--fire-orange); border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;">●</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="showScreen('sendScreen')" style="width: 100%;">← Cancel</button>
+                </div>
+            </div>
+
+            <!-- Send Screen - Enhanced -->
+            <div class="screen" id="sendScreen">
+                <div class="screen-header">
+                    <h1>📤 Send MBITE</h1>
+                    <p>Transfer cryptocurrency to another wallet</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">Recipient Address</label>
+                        <div style="display: flex; gap: var(--spacing-sm);">
+                            <input type="text" class="form-input" placeholder="Enter MBITE address or scan QR" id="sendRecipient" style="flex: 1;">
+                            <button style="background: var(--fire-orange); color: white; border: none; padding: 0 var(--spacing-md); border-radius: 8px; cursor: pointer; font-size: 18px;" onclick="showScreen('qrScannerScreen')">📷</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Amount (MBITE)</label>
+                        <input type="number" class="form-input" placeholder="0.00" id="sendAmount" value="1.5" style="font-size: 18px;">
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Network Fee Priority</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                            <button class="btn btn-small" onclick="setFeeSpeed(this, 'FAST')" style="background: linear-gradient(135deg, var(--fire-orange), #B8863B); color: white;">⚡ FAST</button>
+                            <button class="btn btn-small" onclick="setFeeSpeed(this, 'STANDARD')" style="background: rgba(26, 77, 122, 0.2); color: var(--gold);">⏱️ STANDARD</button>
+                            <button class="btn btn-small" onclick="setFeeSpeed(this, 'SLOW')" style="background: rgba(26, 77, 122, 0.2); color: var(--gold);">🐢 SLOW</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="card-title">Network Fee</div>
+                                <div class="card-value" id="networkFeeDisplay">0.0001 MBITE</div>
+                            </div>
+                            <button style="background: var(--fire-orange); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;" onclick="showScreen('networkFeeScreen')">Edit</button>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); margin-top: var(--spacing-md); padding-top: var(--spacing-md);">
+                            <div class="card-title">Total Amount</div>
+                            <div class="card-value" id="totalAmountDisplay">1.5001 MBITE</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('confirmSendScreen')">✓ Review & Send</button>
+                    <button class="btn btn-secondary" onclick="showScreen('dashboardScreen')">← Back</button>
+                </div>
+            </div>
+
+            <!-- Network Fee Editor Screen -->
+            <div class="screen" id="networkFeeScreen">
+                <div class="screen-header">
+                    <h1>⚙️ Edit Network Fee</h1>
+                    <p>Adjust the transaction fee</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card">
+                        <div class="card-title">Current Speed</div>
+                        <div class="card-value" id="feeSpeedDisplay">Standard</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Custom Fee (MBITE)</label>
+                        <input type="number" class="form-input" placeholder="0.0001" id="customFeeInput" value="0.0001" step="0.00001">
+                        <div style="color: var(--text-secondary); font-size: 12px; margin-top: var(--spacing-sm);">Estimated time: ~10 minutes</div>
+                    </div>
+
+                    <div class="card" style="background: rgba(74, 222, 128, 0.05); border-color: rgba(74, 222, 128, 0.2);">
+                        <div class="card-title">Fee Recommendations</div>
+                        <div style="margin-top: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-sm);">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                <span style="color: var(--text-secondary);">⚡ Fast (2-5 min)</span>
+                                <span style="color: var(--gold); cursor: pointer;" onclick="document.getElementById('customFeeInput').value = '0.0005'">0.0005</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                <span style="color: var(--text-secondary);">⏱️ Standard (10-15 min)</span>
+                                <span style="color: var(--gold); cursor: pointer;" onclick="document.getElementById('customFeeInput').value = '0.0001'">0.0001</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                                <span style="color: var(--text-secondary);">🐢 Slow (30+ min)</span>
+                                <span style="color: var(--gold); cursor: pointer;" onclick="document.getElementById('customFeeInput').value = '0.00005'">0.00005</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('sendScreen')">✓ Confirm Fee</button>
+                </div>
+            </div>
+
+            <!-- Transaction Confirmation Screen -->
+            <div class="screen" id="confirmSendScreen">
+                <div class="screen-header">
+                    <h1>✓ Confirm Transaction</h1>
+                    <p>Review transaction details</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card">
+                        <div class="card-title">Recipient</div>
+                        <div class="card-value" id="confirmRecipient" style="font-size: 14px; word-break: break-all;">-</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-md);">
+                            <div>
+                                <div class="card-title">Amount</div>
+                                <div class="card-value" style="font-size: 20px;">1.5 MBITE</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-sm);">
+                            <div class="card-title">Network Fee</div>
+                            <div class="card-value" style="font-size: 14px;">0.0001 MBITE</div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: var(--spacing-md); margin-top: var(--spacing-md); display: flex; justify-content: space-between;">
+                            <div class="card-title">Total</div>
+                            <div class="card-value" style="font-size: 18px;">1.5001 MBITE</div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="border-color: rgba(200,64,47,.4);">
+                        <div class="card-title" style="color: var(--danger);">THIS CANNOT BE UNDONE</div>
+                        <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6; margin: 8px 0 12px;">
+                            A sent transaction cannot be recalled, reversed or refunded by anyone,
+                            including us. Type the amount below to confirm you have checked it.</p>
+                        <input type="text" class="form-input" id="sendConfirmInput"
+                               inputmode="decimal" autocomplete="off" autocorrect="off"
+                               autocapitalize="off" spellcheck="false"
+                               data-lpignore="true" data-1p-ignore
+                               placeholder="Type the amount, e.g. 1.5"
+                               aria-label="Type the amount to confirm"
+                               style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">
+                        <div id="sendConfirmHint" style="font-size: 12px; color: var(--text-tertiary); margin-top: 8px;">
+                            Must match <span id="sendConfirmTarget" style="font-family: ui-monospace, Menlo, monospace; color: var(--text-primary);">1.5</span> exactly.</div>
+                    </div>
+
+                    <button class="btn btn-primary" id="sendConfirmBtn" disabled
+                            onclick="showScreen('transactionSuccessScreen')"
+                            style="background: var(--danger); opacity:.45; cursor:not-allowed;">Confirm &amp; Send</button>
+                    <button class="btn btn-secondary" onclick="showScreen('sendScreen')">← Edit Transaction</button>
+                </div>
+            </div>
+
+            <!-- Transaction Success Screen -->
+            <div class="screen" id="transactionSuccessScreen">
+                <div class="screen-header">
+                    <h1>✅ Sent Successfully</h1>
+                    <p>Transaction confirmed</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-lg);">
+                    <div style="width: 120px; height: 120px; background: linear-gradient(135deg, #2E9E6B, #25845A); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; animation: pulse 1s ease-out;">✓</div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--gold); margin-bottom: var(--spacing-sm);">1.5 MBITE Sent</h3>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: var(--spacing-lg);">Your transaction has been broadcast to the network</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Transaction Hash</div>
+                        <div style="color: var(--gold); font-family: monospace; font-size: 12px; word-break: break-all; margin-top: var(--spacing-sm);">0x1a2b3c4d5e6f7g8h9i0j...</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showScreen('dashboardScreen')" style="background: #2E9E6B;">🏠 Back to Dashboard</button>
+                    <button class="btn btn-secondary" onclick="showScreen('sendScreen')">📤 Send More</button>
+                </div>
+            </div>
+
+            <!-- Receive Screen - PRODUCTION GOD LEVEL -->
+            <div class="screen" id="receiveScreen">
+                <div class="screen-header">
+                    <h1>📥 Receive MBITE</h1>
+                    <p>Mining-Ready Wallet Address</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+
+                    <!-- BLOCKCHAIN STATUS -->
+                    <div style="background: linear-gradient(135deg, rgba(26, 31, 58, 0.6) 0%, rgba(21, 26, 47, 0.4) 100%); border: 1px solid rgba(217, 164, 65, 0.12); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 4px;">Blockchain Height</div>
+                            <div style="font-size: 20px; font-weight: 700; color: var(--gold);" id="blockchainHeight">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 4px;">Wallet Balance</div>
+                            <div style="font-size: 20px; font-weight: 700; color: var(--emerald);" id="walletBalance">10.0000 MBITE</div>
+                        </div>
+                    </div>
+
+                    <!-- PREMIUM QR CODE DISPLAY -->
+                    <div style="background: linear-gradient(135deg, rgba(26, 31, 58, 0.7) 0%, rgba(21, 26, 47, 0.5) 100%); border: 1px solid rgba(217, 164, 65, 0.15); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px;">Scan for Mining</div>
+                        <div id="qrCodeContainer" style="text-align: center; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);"></div>
+                        <div style="font-size: 11px; color: #888; text-align: center; margin-top: 8px;">Share this QR code with miners to receive MBITE</div>
+                    </div>
+
+                    <!-- WALLET ADDRESS - PREMIUM DISPLAY -->
+                    <div>
+                        <label class="form-label" style="margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">Your Mining Address</label>
+                        <div style="background: rgba(26, 31, 58, 0.5); border: 1px solid rgba(217, 164, 65, 0.12); border-radius: 12px; padding: 14px; display: flex; align-items: center; gap: 10px;">
+                            <div id="receiveAddress" style="flex: 1; font-family: 'Courier New', monospace; font-size: 12px; color: var(--gold); word-break: break-all; font-weight: 600;">moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k</div>
+                            <button onclick="copyAddress()" style="background: linear-gradient(135deg, var(--fire-orange), #B8863B); border: none; color: white; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.3s ease; white-space: nowrap;">📋 Copy</button>
+                        </div>
+                        <div id="copyFeedback" style="font-size: 11px; color: #2E9E6B; margin-top: 6px; text-align: center; display: none;">✓ Copied to clipboard!</div>
+                    </div>
+
+                    <!-- WALLET INFO -->
+                    <div style="background: rgba(26, 31, 58, 0.4); border: 1px solid rgba(217, 164, 65, 0.08); border-radius: 12px; padding: 14px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 4px;">Wallet Name</div>
+                                <div style="font-size: 13px; font-weight: 600; color: #8A8580;">Primary Wallet</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 4px;">Status</div>
+                                <div style="font-size: 13px; font-weight: 600; color: var(--emerald);">🟢 Active</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <button class="btn btn-primary" onclick="copyAddress()" style="width: 100%; margin-top: 8px;">📋 Copy Full Address</button>
+                    <button class="btn btn-secondary" onclick="shareWalletAddress()" style="width: 100%;">🔗 Share Mining Address</button>
+                    <button class="btn btn-secondary" onclick="showScreen('dashboardScreen')" style="width: 100%;">← Back to Dashboard</button>
+                </div>
+            </div>
+
+            <!-- Security Screen -->
+            <div class="screen" id="securityScreen">
+                <div class="screen-header">
+                    <h1>Security</h1>
+                    <p>Protect your wallet</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">Biometric Authentication</label>
+                        <div class="toggle">
+                            <span>Face ID / Fingerprint</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Auto-Lock Timeout</label>
+                        <div class="toggle">
+                            <span>Lock after 5 minutes</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Recovery Options</div>
+                        <button class="btn btn-secondary" onclick="showScreen('seedPhraseScreen')">🔑 View Recovery Phrase</button>
+                        <button class="btn btn-secondary" onclick="showScreen('createPasswordScreen')" style="margin-top: var(--spacing-sm);">🔐 Change Password</button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Hardware Wallet</div>
+                        <button class="btn btn-secondary">📟 Connect Ledger</button>
+                        <button class="btn btn-secondary" style="margin-top: var(--spacing-sm);">📟 Connect Trezor</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contacts Screen -->
+            <div class="screen" id="contactsScreen">
+                <div class="screen-header">
+                    <h1>Contacts</h1>
+                    <p>Frequently used addresses</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="🔍 Search contacts...">
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-avatar">JW</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Jenny Wilson</div>
+                            <div class="contact-address">moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-avatar" style="background:#232833; color:#D9A441;">ET</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Edgar Torrey</div>
+                            <div class="contact-address">M2hX7kL9Qp5Jm3Zw8Yd1Fs4Xn6Rc2Vt</div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-avatar" style="background: linear-gradient(135deg, #B8863B, var(--fire-orange));">EB</div>
+                        <div class="contact-info">
+                            <div class="contact-name">Evelina Burke</div>
+                            <div class="contact-address">moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('addContactScreen')">➕ Add Contact</button>
+                </div>
+            </div>
+
+            <!-- Create Password Screen -->
+            <div class="screen" id="createPasswordScreen">
+                <div class="screen-header">
+                    <h1>Create Password</h1>
+                    <p>Secure your wallet</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" autocomplete="off" data-lpignore="true" data-1p-ignore class="form-input" placeholder="Enter password">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" autocomplete="off" data-lpignore="true" data-1p-ignore class="form-input" placeholder="Confirm password">
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Password Strength</div>
+                        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+                            <div style="flex: 1; height: 8px; background: var(--success); border-radius: 4px;"></div>
+                            <div style="flex: 1; height: 8px; background: var(--success); border-radius: 4px;"></div>
+                            <div style="flex: 1; height: 8px; background: var(--success); border-radius: 4px;"></div>
+                            <div style="flex: 1; height: 8px; background: var(--success); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Password Requirements</div>
+                        <div style="margin-top: var(--spacing-md);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span>
+                                <span>At least 8 characters</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span>
+                                <span>Mix of uppercase and lowercase</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span>
+                                <span>At least one number</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-sm); color: var(--success);">
+                                <span>✓</span>
+                                <span>At least one special character</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toggle">
+                        <span>Enable Face ID</span>
+                        <div class="toggle-switch"></div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="showScreen('seedPhraseScreen')">Create Password</button>
+                </div>
+            </div>
+
+            <!-- Seed Phrase Screen -->
+            <!-- duplicate seedPhraseScreen removed: shadowed by the first, unreachable -->
+
+            <!-- Success Screen -->
+            <div class="screen" id="successScreen">
+                <div class="screen-header">
+                    <h1>Success!</h1>
+                    <p>Wallet ready to use</p>
+                </div>
+                <div class="screen-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: var(--spacing-lg);">
+                    <div class="success-icon">✓</div>
+                    <h2 style="color: var(--gold);">Wallet Created!</h2>
+                    <p style="color: var(--text-secondary);">Your MoonBite wallet is ready to use. You can now send, receive, and manage your MBITE coins.</p>
+                    <div class="card">
+                        <span style="color: var(--success);">✓ Wallet successfully created and secured</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="showScreen('dashboardScreen')">🏠 Go to Dashboard</button>
+                </div>
+            </div>
+
+            <!-- Create Wallet Screen -->
+            <!-- duplicate createWalletScreen removed: shadowed by the first, unreachable -->
+
+            <!-- Add Contact Screen -->
+            <div class="screen" id="addContactScreen">
+                <div class="screen-header">
+                    <h1>Add Contact</h1>
+                    <p>Save a frequently used address</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group">
+                        <label class="form-label">Contact Name</label>
+                        <input type="text" class="form-input" placeholder="e.g., John">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Wallet Address</label>
+                        <input type="text" class="form-input" placeholder="Enter MBITE address">
+                    </div>
+
+                    <button class="btn btn-primary">Save Contact</button>
+                </div>
+            </div>
+
+            <!-- Confirm Send Screen -->
+            <!-- duplicate confirmSendScreen removed: shadowed by the first, unreachable -->
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">☀️</button>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="showScreen('dashboardScreen'); setActiveNav(this)" title="Home">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12H3l9-9 9 9h-2"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M9 21v-6h6v6"/></svg></div>
+                <div>Home</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('walletsScreen'); setActiveNav(this)" title="Wallets">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6"/><circle cx="16" cy="14" r="1.2"/></svg></div>
+                <div>Wallets</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('contactsScreen'); setActiveNav(this)" title="Contacts">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M3 8h2M3 12h2M3 16h2"/><circle cx="12" cy="10" r="2.2"/><path d="M9 16a3 3 0 0 1 6 0"/></svg></div>
+                <div>Contacts</div>
+            </button>
+            <button class="nav-item" onclick="showScreen('securityScreen'); setActiveNav(this)" title="Security">
+                <div class="nav-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><circle cx="12" cy="12" r="1.6"/><path d="M12 13.6V16"/></svg></div>
+                <div>Security</div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Service Worker registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/wallet-sw.js').catch(() => {});
+        }
+
+        let deferredPrompt;
+        let currentScreen = 'pinSetupScreen';
+
+        // ============================================
+        // CUSTODIAL WALLET SYSTEM - INDIVIDUAL WALLETS
+        // ============================================
+
+        /* ---------------------------------------------------------------
+           Money is stored and moved as an INTEGER number of cents, never as a
+           float. 0.1 + 0.2 !== 0.3 in IEEE-754, and a balance that drifts by a
+           cent is a balance a miner cannot reconcile against the chain. Coins
+           exist only at the display boundary.
+
+           Doc 18: never truncate an amount, never round a balance down.
+           Doc 11: 8 decimal places in technical contexts.
+           --------------------------------------------------------------- */
+        const CENTS_PER_COIN = 100000000;
+
+        /* Parse a user- or storage-supplied value into integer cents without
+           going through float arithmetic on the fractional part. */
+        function toCents(v) {
+            if (typeof v === 'number' && Number.isSafeInteger(v) && Math.abs(v) >= CENTS_PER_COIN) {
+                return v;                       // already cents
+            }
+            const str = String(v == null ? 0 : v).trim();
+            const m = /^(-?)(\d*)(?:\.(\d*))?$/.exec(str);
+            if (!m) return 0;
+            const sign = m[1] === '-' ? -1 : 1;
+            const whole = m[2] || '0';
+            const frac = (m[3] || '').slice(0, 8).padEnd(8, '0');
+            return sign * (Number(whole) * CENTS_PER_COIN + Number(frac));
+        }
+
+        /* Render integer cents as MBITE. Exact: no rounding, no truncation. */
+        function mbite(cents) {
+            const c = Math.trunc(Number(cents) || 0);
+            const neg = c < 0 ? '-' : '';
+            const abs = Math.abs(c);
+            const whole = Math.floor(abs / CENTS_PER_COIN);
+            const frac = String(abs % CENTS_PER_COIN).padStart(8, '0');
+            return neg + whole.toLocaleString('en-US') + '.' + frac;
+        }
+
+
+        /* Doc 18: an irreversible action is gated on typed confirmation, not a
+           tap or a checkbox. The sender must retype the exact amount, compared
+           in integer cents so 1.50 and 1.5 both pass while 15 does not. */
+        (function wireSendConfirmation() {
+            function bind() {
+                const input = document.getElementById('sendConfirmInput');
+                const btn = document.getElementById('sendConfirmBtn');
+                const target = document.getElementById('sendConfirmTarget');
+                const hint = document.getElementById('sendConfirmHint');
+                if (!input || !btn || !target) return;
+
+                function check() {
+                    const want = toCents(target.textContent);
+                    const got = toCents(input.value);
+                    const ok = input.value.trim() !== '' && got === want;
+                    btn.disabled = !ok;
+                    btn.style.opacity = ok ? '1' : '.45';
+                    btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+                    btn.style.background = ok ? 'var(--success)' : 'var(--danger)';
+                    if (hint) {
+                        hint.style.color = ok ? 'var(--success)'
+                            : (input.value.trim() ? 'var(--danger)' : 'var(--text-tertiary)');
+                    }
+                    input.setAttribute('aria-invalid', ok ? 'false' : 'true');
+                }
+                input.addEventListener('input', check);
+                btn.addEventListener('click', function (e) {
+                    if (btn.disabled) { e.preventDefault(); e.stopPropagation(); }
+                });
+                check();
+            }
+            document.readyState === 'loading'
+                ? document.addEventListener('DOMContentLoaded', bind)
+                : bind();
+        })();
+
+        const CustodialWallet = {
+            // Generate unique wallet for each user
+            generateWallet: function(userId) {
+                const userWalletKey = 'moonbite_wallet_' + userId;
+                let userWallet = localStorage.getItem(userWalletKey);
+
+                if (!userWallet) {
+                    // Generate new wallet
+                    const walletData = {
+                        userId: userId,
+                        address: this.generateAddress(userId),
+                        privateKey: this.generatePrivateKey(userId),
+                        seedPhrase: this.generateSeedPhrase(userId),
+                        balanceCents: 10 * CENTS_PER_COIN,
+                        currency: 'MBITE',
+                        walletName: 'Primary Wallet',
+                        blockchainHeight: 0,
+                        status: 'Active',
+                        createdAt: new Date().toISOString(),
+                        transactions: []
+                    };
+                    localStorage.setItem(userWalletKey, JSON.stringify(walletData));
+                    return walletData;
+                }
+
+                const parsed = JSON.parse(userWallet);
+                /* Migrate wallets written before balances moved to integer
+                   cents. Done once, in place, so no reconciliation is needed
+                   later against a value that was already lossy. */
+                if (parsed.balanceCents === undefined) {
+                    parsed.balanceCents = toCents(parsed.balance);
+                    delete parsed.balance;
+                    delete parsed.usdValue;
+                    localStorage.setItem(userWalletKey, JSON.stringify(parsed));
+                }
+                return parsed;
+            },
+
+            // Generate unique address using user ID
+            generateAddress: function(userId) {
+                const hash = this.simpleHash('moon' + userId);
+                const bech32Address = 'moon1' + hash.substring(0, 42);
+                return bech32Address;
+            },
+
+            // Generate private key using user ID
+            generatePrivateKey: function(userId) {
+                const hash = this.simpleHash('key' + userId);
+                return '0x' + hash.substring(0, 64);
+            },
+
+            // Generate seed phrase using user ID
+            generateSeedPhrase: function(userId) {
+                const words = [
+                    'abandon', 'ability', 'about', 'above', 'absent', 'absorb',
+                    'abstract', 'abuse', 'access', 'accident', 'account', 'accuse',
+                    'achieve', 'acid', 'acoustic', 'acquire', 'across', 'act',
+                    'action', 'actor', 'actual', 'acumen', 'acute', 'adage'
+                ];
+
+                const seed = [];
+                let hash = this.simpleHash(userId);
+                for (let i = 0; i < 12; i++) {
+                    const index = parseInt(hash.substring(i * 5, i * 5 + 5), 16) % words.length;
+                    seed.push(words[index]);
+                }
+                return seed.join(' ');
+            },
+
+            // Simple hash function for generating unique values
+            simpleHash: function(str) {
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+                return Math.abs(hash).toString(16).padStart(64, '0');
+            },
+
+            // Get user's wallet
+            getWallet: function() {
+                const userId = this.getUserId();
+                return this.generateWallet(userId);
+            },
+
+            // Get or create user ID
+            getUserId: function() {
+                let userId = localStorage.getItem('moonbite_user_id');
+                if (!userId) {
+                    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('moonbite_user_id', userId);
+                }
+                return userId;
+            },
+
+            // Update wallet
+            updateWallet: function(updates) {
+                const userId = this.getUserId();
+                const userWalletKey = 'moonbite_wallet_' + userId;
+                const wallet = this.getWallet();
+                const updated = { ...wallet, ...updates };
+                localStorage.setItem(userWalletKey, JSON.stringify(updated));
+                this.syncAllScreens();
+                return updated;
+            },
+
+            // Sync wallet data to all screens
+            syncAllScreens: function() {
+                const wallet = this.getWallet();
+
+                // Update Balance Card (Dashboard)
+                const balanceAmount = document.querySelector('.balance-amount');
+                if (balanceAmount) {
+                    // Write only the number node: assigning textContent here would
+                    // delete the nested .balance-unit span and lose the ticker.
+                    balanceAmount.firstChild
+                        ? balanceAmount.firstChild.nodeValue = mbite(wallet.balanceCents)
+                        : balanceAmount.prepend(mbite(wallet.balanceCents));
+                }
+
+                // Update Receive Screen Address
+                const receiveAddress = document.getElementById('receiveAddress');
+                if (receiveAddress) {
+                    receiveAddress.textContent = wallet.address;
+                }
+
+                // Update Blockchain Height
+                const blockchainHeightEl = document.getElementById('blockchainHeight');
+                if (blockchainHeightEl) {
+                    blockchainHeightEl.textContent = wallet.blockchainHeight;
+                }
+
+                // Update Wallet Balance Display
+                const walletBalanceEl = document.getElementById('walletBalance');
+                if (walletBalanceEl) {
+                    walletBalanceEl.textContent = mbite(wallet.balanceCents) + ' MBITE';
+                }
+
+                // Update all wallet items on Wallets Screen
+                const walletItems = document.querySelectorAll('.wallet-item');
+                walletItems.forEach((item, index) => {
+                    const balanceEl = item.querySelector('.wallet-balance');
+                    if (balanceEl && index === 0) { // Primary wallet
+                        balanceEl.textContent = mbite(wallet.balanceCents) + ' MBITE';
+                        const usdEl = item.querySelector('.wallet-usd');
+                        if (usdEl) {
+                        }
+                    }
+                });
+
+                // Update wallet name display
+                const walletNameDisplay = document.querySelector('.wallet-name-display');
+                if (walletNameDisplay) {
+                    walletNameDisplay.textContent = wallet.walletName;
+                }
+
+                // Update wallet amount
+                const walletAmount = document.querySelector('.wallet-amount');
+                if (walletAmount) {
+                    walletAmount.textContent = mbite(wallet.balanceCents) + ' MBITE';
+                }
+
+                // Update premium wallet card
+                const premiumWalletCard = document.querySelector('.premium-wallet-card');
+                if (premiumWalletCard) {
+                    const nameEl = premiumWalletCard.querySelector('.wallet-name-display');
+                    if (nameEl) nameEl.textContent = wallet.walletName;
+                    const amountEl = premiumWalletCard.querySelector('.wallet-amount');
+                    if (amountEl) amountEl.textContent = mbite(wallet.balanceCents) + ' MBITE';
+                }
+            }
+        };
+
+        // Initialize - show PIN entry for returning users, or PIN setup for new users
+        function initializeScreens() {
+            // Initialize user's custodial wallet
+            const userWallet = CustodialWallet.getWallet();
+
+            // Remove active from all screens first
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Check if onboarding is complete
+            const onboardingComplete = localStorage.getItem('moonbite_onboarding_complete');
+
+            if (onboardingComplete) {
+                // Returning user - show PIN entry/verification screen
+                const pinVerifyScreen = document.getElementById('pinVerifyScreen');
+                if (pinVerifyScreen) {
+                    pinVerifyScreen.classList.add('active');
+                    currentScreen = 'pinVerifyScreen';
+                }
+            } else {
+                // First time user - show PIN setup screen
+                const pinScreen = document.getElementById('pinSetupScreen');
+                if (pinScreen) {
+                    pinScreen.classList.add('active');
+                }
+            }
+
+            initTheme();
+
+            // Sync user's wallet data to all screens
+            setTimeout(() => {
+                CustodialWallet.syncAllScreens();
+            }, 100);
+        }
+
+        // Call initialization immediately and also on load as fallback
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeScreens);
+        } else {
+            initializeScreens();
+        }
+        window.addEventListener('load', initializeScreens);
+
+        // PWA Install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        document.getElementById('installBtn')?.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt = null;
+                document.getElementById('installPrompt').classList.remove('show');
+            }
+        });
+
+        document.getElementById('dismissBtn')?.addEventListener('click', () => {
+            document.getElementById('installPrompt').classList.remove('show');
+        });
+
+        // Screen navigation
+        function showScreen(screenId) {
+            // Sync user's wallet data before changing screens
+            CustodialWallet.syncAllScreens();
+
+            // Update confirmation screen with actual user input
+            if (screenId === 'confirmSendScreen') {
+                const sc = document.getElementById('sendConfirmInput');
+                if (sc) { sc.value = ''; sc.dispatchEvent(new Event('input')); }
+                const recipient = document.getElementById('sendRecipient')?.value || '-';
+                const amount = document.getElementById('sendAmount')?.value || '0';
+                document.getElementById('confirmRecipient').textContent = recipient;
+                document.querySelector('[id="totalAmountDisplay"]')?.parentElement?.querySelector('.card-value')?.textContent?.replace(/\d+\.?\d*/, amount) || null;
+            }
+
+            // Remove active from ALL screens first
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show only the new screen
+            const newScreenEl = document.getElementById(screenId);
+            if (newScreenEl) {
+                newScreenEl.classList.add('active');
+                currentScreen = screenId;
+                updateTopBar(screenId);
+
+                // Generate QR code for receive screen
+                if (screenId === 'receiveScreen') {
+                    setTimeout(generateQRCode, 100);
+                }
+            }
+        }
+
+        function updateTopBar(screenId) {
+            const titles = {
+                'dashboardScreen': '🌙 MoonBite',
+                'walletsScreen': '💼 My Wallets',
+                'sendScreen': '📤 Send MBITE',
+                'receiveScreen': '📥 Receive MBITE',
+                'securityScreen': '🔒 Security',
+                'contactsScreen': '📇 Contacts',
+                'createPasswordScreen': '🔐 Create Password',
+                'seedPhraseScreen': '🔑 Recovery Phrase',
+                'successScreen': '✓ Success',
+                'createWalletScreen': '➕ Create Wallet',
+                'addContactScreen': '➕ Add Contact',
+                'confirmSendScreen': '✓ Confirm Send'
+            };
+            const screenTitle = document.getElementById('screenTitle');
+            if (screenTitle) {
+                screenTitle.textContent = titles[screenId] || 'MoonBite';
+            }
+            updateBackButton(screenId);
+        }
+
+        function updateBackButton(screenId) {
+            const backBtn = document.getElementById('backBtn');
+            const homeScreens = ['dashboardScreen', 'walletsScreen', 'contactsScreen', 'securityScreen'];
+            if (homeScreens.includes(screenId)) {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('backBtn')?.addEventListener('click', () => {
+            const previousScreens = {
+                'createWalletScreen': 'walletsScreen',
+                'addContactScreen': 'contactsScreen',
+                'createPasswordScreen': 'securityScreen',
+                'seedPhraseScreen': 'createPasswordScreen',
+                'confirmSendScreen': 'sendScreen',
+                'successScreen': 'dashboardScreen'
+            };
+            showScreen(previousScreens[currentScreen] || 'dashboardScreen');
+        });
+
+        function setActiveNav(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function copyAddress() {
+            const address = 'moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k';
+            navigator.clipboard.writeText(address);
+
+            // Show visual feedback
+            const feedback = document.getElementById('copyFeedback');
+            if (feedback) {
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function shareWalletAddress() {
+            const address = 'moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k';
+            if (navigator.share) {
+                navigator.share({
+                    title: '🌙 MoonBite Mining Address',
+                    text: 'Send your mining rewards to this address: ' + address,
+                    url: window.location.href
+                });
+            } else {
+                copyAddress();
+                alert('Share address: ' + address);
+            }
+        }
+
+        function copySeed() {
+            navigator.clipboard.writeText('abandon ability about above absent absorb abstract abuse access accident account accuse');
+            alert('Seed phrase copied to clipboard!');
+        }
+
+        function generateQRCode() {
+            const container = document.getElementById('qrCodeContainer');
+            if (!container) return;
+
+            // Clear previous QR code
+            container.innerHTML = '';
+
+            // Get wallet address
+            const address = document.getElementById('receiveAddress')?.textContent || 'moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k';
+
+            // Generate inline SVG QR code (no external library needed)
+            try {
+                const qrCanvas = generateQRCodeSVG(address, 160);
+                container.appendChild(qrCanvas);
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                // Fallback: show the address as text if QR fails
+                container.innerHTML = '<div style="color: #888; font-size: 12px; padding: 20px; text-align: center;">QR Code unavailable<br>Use address below</div>';
+            }
+        }
+
+        function generateQRCodeSVG(text, size) {
+            // Simple QR code generator using canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Fill background
+            ctx.fillStyle = '#161A22';
+            ctx.fillRect(0, 0, size, size);
+
+            // Draw a simple pattern (simplified QR representation)
+            // This creates a scannable pattern for the address
+            ctx.fillStyle = '#FFFFFF';
+            const moduleCount = 21; // Simple 21x21 grid
+            const moduleSize = size / moduleCount;
+
+            // Top-left position marker
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 7; j++) {
+                    if ((i === 0 || i === 6 || j === 0 || j === 6) || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) {
+                        ctx.fillRect(i * moduleSize, j * moduleSize, moduleSize - 0.5, moduleSize - 0.5);
+                    }
+                }
+            }
+
+            // Top-right position marker
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 7; j++) {
+                    if ((i === 0 || i === 6 || j === 0 || j === 6) || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) {
+                        ctx.fillRect((moduleCount - 7 + i) * moduleSize, j * moduleSize, moduleSize - 0.5, moduleSize - 0.5);
+                    }
+                }
+            }
+
+            // Bottom-left position marker
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 7; j++) {
+                    if ((i === 0 || i === 6 || j === 0 || j === 6) || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) {
+                        ctx.fillRect(i * moduleSize, (moduleCount - 7 + j) * moduleSize, moduleSize - 0.5, moduleSize - 0.5);
+                    }
+                }
+            }
+
+            // Data area (hash-based pattern for the address)
+            const hash = text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            for (let i = 0; i < moduleCount; i++) {
+                for (let j = 0; j < moduleCount; j++) {
+                    if (i < 9 || i > 11 || j > 8) { // Avoid timing patterns
+                        if (((hash * (i + 1) * (j + 1)) % 256) > 128) {
+                            ctx.fillRect(i * moduleSize, j * moduleSize, moduleSize - 0.5, moduleSize - 0.5);
+                        }
+                    }
+                }
+            }
+
+            return canvas;
+        }
+
+        // Toggle switches
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Settings button
+        document.getElementById('settingsBtn')?.addEventListener('click', () => {
+            showScreen('securityScreen');
+            setActiveNav(document.querySelectorAll('.nav-item')[3]);
+        });
+
+        // Notifications button
+        document.getElementById('notificationBtn')?.addEventListener('click', () => {
+            alert('No new notifications');
+        });
+
+        // ============================================================
+        // Onboarding Functions
+        // ============================================================
+
+        function skipToWalletSetup() {
+            showScreen('walletSetupScreen');
+        }
+
+        function movePinFocus(input, nextId) {
+            if (input.value.length === 1 && nextId !== 'confirmPin') {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        function handlePinComplete() {
+            const lastDigit = document.getElementById('confirmPinDigit6');
+            if (lastDigit.value.length === 1) {
+                // Auto-validate when last digit is entered
+                validateAndSavePIN();
+            }
+        }
+
+        // USER-CENTRIC PIN: ONE TIME SETUP, NO CONFIRMATION
+        function handlePinSetupComplete() {
+            const pin = document.getElementById('pinDigit1').value +
+                       document.getElementById('pinDigit2').value +
+                       document.getElementById('pinDigit3').value +
+                       document.getElementById('pinDigit4').value +
+                       document.getElementById('pinDigit5').value +
+                       document.getElementById('pinDigit6').value;
+
+            if (pin.length === 6) {
+                // Auto-submit when all 6 digits entered
+                saveSetupPINAndContinue();
+            }
+        }
+
+        function proceedToConfirmPin() {
+            const pin = document.getElementById('pinDigit1').value +
+                       document.getElementById('pinDigit2').value +
+                       document.getElementById('pinDigit3').value +
+                       document.getElementById('pinDigit4').value +
+                       document.getElementById('pinDigit5').value +
+                       document.getElementById('pinDigit6').value;
+
+            if (pin.length !== 6) {
+                alert('Please enter a 6-digit PIN');
+                return;
+            }
+
+            // Store the first PIN temporarily
+            window.tempPin = pin;
+
+            // Hide create step, show confirm step
+            document.getElementById('pinCreateStep').style.display = 'none';
+            document.getElementById('pinConfirmStep').style.display = 'block';
+
+            // Focus on first confirm digit
+            setTimeout(() => {
+                document.getElementById('pinConfirm1').focus();
+            }, 100);
+        }
+
+        function backToCreatePin() {
+            // Clear confirm inputs
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById('pinConfirm' + i).value = '';
+            }
+            // Show create step, hide confirm step
+            document.getElementById('pinCreateStep').style.display = 'block';
+            document.getElementById('pinConfirmStep').style.display = 'none';
+            document.getElementById('pinMismatchError').style.display = 'none';
+
+            // Focus on first digit
+            setTimeout(() => {
+                document.getElementById('pinDigit1').focus();
+            }, 100);
+        }
+
+        function handlePinNext() {
+            const pin6 = document.getElementById('pinDigit6');
+            if (pin6.value) {
+                proceedToConfirmPin();
+            }
+        }
+
+        function handlePinConfirmComplete() {
+            const confirmPin = document.getElementById('pinConfirm1').value +
+                             document.getElementById('pinConfirm2').value +
+                             document.getElementById('pinConfirm3').value +
+                             document.getElementById('pinConfirm4').value +
+                             document.getElementById('pinConfirm5').value +
+                             document.getElementById('pinConfirm6').value;
+
+            if (confirmPin.length === 6) {
+                if (confirmPin === window.tempPin) {
+                    // PINs match - save
+                    saveSetupPINAndContinue();
+                } else {
+                    // PINs don't match - show error
+                    document.getElementById('pinMismatchError').style.display = 'block';
+                    // Clear confirm inputs
+                    for (let i = 1; i <= 6; i++) {
+                        document.getElementById('pinConfirm' + i).value = '';
+                    }
+                    setTimeout(() => {
+                        document.getElementById('pinConfirm1').focus();
+                    }, 100);
+                }
+            }
+        }
+
+        function saveSetupPINAndContinue() {
+            const pin = window.tempPin;
+
+            // Save PIN and mark onboarding as complete
+            localStorage.setItem('moonbite_pin', pin);
+            localStorage.setItem('moonbite_onboarding_complete', 'true');
+
+            // Show success feedback
+            const btn = document.querySelector('[onclick="saveSetupPINAndContinue()"]');
+            if (btn) {
+                btn.textContent = '✓ PIN Saved!';
+                btn.style.background = 'linear-gradient(135deg, #2E9E6B, #2E9E6B)';
+            }
+
+            // Proceed to next screen
+            setTimeout(() => {
+                showScreen('walletSetupScreen');
+            }, 500);
+        }
+
+        // RETURNING USERS: BIOMETRIC FIRST, PIN AS FALLBACK
+        function tryBiometricLogin() {
+            // Check if device supports biometric authentication
+            if (window.PublicKeyCredential) {
+                console.log('Biometric available - attempting authentication');
+                // In production, use WebAuthn API
+                // For now, show success and proceed
+                showScreen('dashboardScreen');
+            } else {
+                // Fallback to PIN if biometric not available
+                showPINFallback();
+            }
+        }
+
+        function showPINFallback() {
+            const fallbackArea = document.getElementById('pinFallbackArea');
+            fallbackArea.style.display = 'block';
+            document.getElementById('verifyPin0').focus();
+        }
+
+        // SIMPLIFIED PIN VERIFICATION - NO CONFIRMATION NEEDED
+        function validateAndSavePIN() {
+            // This is kept for backward compatibility
+            saveSetupPINAndContinue();
+        }
+
+        function copySeedPhrase() {
+            const seedWords = 'mineral swift option stale harbor pearl space bench payment bomb hail motes';
+            navigator.clipboard.writeText(seedWords).then(() => {
+                alert('✓ Seed phrase copied to clipboard!');
+            });
+        }
+
+        // Password visibility toggle
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.type = field.type === 'password' ? 'text' : 'password';
+            }
+        }
+
+        // Transaction Fee Speed Handler
+        function setFeeSpeed(button, speed) {
+            const buttons = button.parentElement.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.style.background = 'rgba(26, 77, 122, 0.2)';
+                btn.style.color = 'var(--gold)';
+            });
+            button.style.background = 'linear-gradient(135deg, var(--fire-orange), #B8863B)';
+            button.style.color = 'white';
+
+            const fees = { 'FAST': '0.0005', 'STANDARD': '0.0001', 'SLOW': '0.00005' };
+            document.getElementById('networkFeeDisplay').textContent = fees[speed] + ' MBITE';
+            document.getElementById('feeSpeedDisplay').textContent = speed;
+
+            const amount = parseFloat(document.getElementById('sendAmount').value) || 1.5;
+            const fee = parseFloat(fees[speed]);
+            document.getElementById('totalAmountDisplay').textContent = (amount + fee).toFixed(4) + ' MBITE';
+        }
+
+        // Copy Address Function
+        function copyAddress() {
+            const address = document.getElementById('receiveAddress')?.textContent || 'moon1qw3j5r2h8g9f4k2m5l7n9p0a1s3d5f7g9h2j4k';
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(address).then(() => {
+                    alert('✓ Address copied to clipboard!');
+                }).catch(() => {
+                    alert('Address: ' + address);
+                });
+            } else {
+                alert('Address: ' + address);
+            }
+        }
+
+        // Password strength indicator
+        function updatePasswordStrength() {
+            const password = document.getElementById('passwordInput')?.value || '';
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[!@#$%^&*]/.test(password)) strength++;
+
+            // Update strength bars
+            for (let i = 1; i <= 4; i++) {
+                const bar = document.getElementById(`strengthBar${i}`);
+                if (bar) {
+                    bar.style.background = i <= strength ? 'var(--success)' : 'rgba(74, 222, 128, 0.3)';
+                }
+            }
+        }
+
+        function completeOnboarding() {
+            // Validate passwords match
+            const password = document.getElementById('passwordInput')?.value || '';
+            const confirmPassword = document.getElementById('confirmPasswordInput')?.value || '';
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters!');
+                return;
+            }
+
+            // Mark onboarding as complete
+            localStorage.setItem('moonbite_onboarding_complete', 'true');
+            localStorage.setItem('moonbite_wallet_setup', 'true');
+
+            // Show dashboard
+            showScreen('dashboardScreen');
+            setActiveNav(document.querySelectorAll('.nav-item')[0]);
+
+            // Show success message
+            alert('✓ Wallet setup complete! Welcome to MoonBite.');
+        }
+
+        // Auto-submit when PIN fallback is complete (all 6 digits entered)
+        function handlePinFallbackComplete() {
+            const pin0 = document.getElementById('verifyPin0').value;
+            const pin1 = document.getElementById('verifyPin1').value;
+            const pin2 = document.getElementById('verifyPin2').value;
+            const pin3 = document.getElementById('verifyPin3').value;
+            const pin4 = document.getElementById('verifyPin4').value;
+            const pin5 = document.getElementById('verifyPin5').value;
+
+            if (pin0 && pin1 && pin2 && pin3 && pin4 && pin5) {
+                verifyPINAndLogin();
+            }
+        }
+
+        // PIN verification for returning users (fallback option)
+        function verifyPINAndLogin() {
+            const enteredPIN = document.getElementById('verifyPin0').value +
+                              document.getElementById('verifyPin1').value +
+                              document.getElementById('verifyPin2').value +
+                              document.getElementById('verifyPin3').value +
+                              document.getElementById('verifyPin4').value +
+                              document.getElementById('verifyPin5').value;
+
+            if (enteredPIN.length !== 6) {
+                alert('Please enter a valid 6-digit PIN');
+                return;
+            }
+
+            // Get stored PIN from localStorage
+            const storedPIN = localStorage.getItem('moonbite_pin');
+
+            if (enteredPIN === storedPIN) {
+                // PIN is correct - show dashboard
+                document.getElementById('pinVerifyError').style.display = 'none';
+                showScreen('dashboardScreen');
+                setActiveNav(document.querySelectorAll('.nav-item')[0]);
+            } else {
+                // PIN is incorrect - show error
+                document.getElementById('pinVerifyError').style.display = 'block';
+                // Clear the inputs
+                document.getElementById('verifyPin0').value = '';
+                document.getElementById('verifyPin1').value = '';
+                document.getElementById('verifyPin2').value = '';
+                document.getElementById('verifyPin3').value = '';
+                document.getElementById('verifyPin4').value = '';
+                document.getElementById('verifyPin5').value = '';
+                document.getElementById('verifyPin0').focus();
+            }
+        }
+
+        // Auto-focus next pin input
+        document.addEventListener('DOMContentLoaded', () => {
+            const pinInputs = document.querySelectorAll('#pinVerifyScreen .pin-input, #pinSetupScreen .pin-input');
+            pinInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                });
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    }
+                });
+            });
+        });
+
+        // Check if onboarding was already completed
+        // ============================================================
+        // Theme Toggle System
+        // ============================================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('moonbite_theme') || 'dark';
+            setTheme(savedTheme);
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('moonbite_theme', theme);
+            const themeToggleBtn = document.getElementById('themeToggle');
+            if (themeToggleBtn) {
+                themeToggleBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        function checkOnboardingStatus() {
+            const onboardingComplete = localStorage.getItem('moonbite_onboarding_complete');
+
+            if (onboardingComplete) {
+                // Skip onboarding, show dashboard
+                const pinSetupScreen = document.getElementById('pinSetupScreen');
+                const dashboardScreen = document.getElementById('dashboardScreen');
+
+                if (pinSetupScreen) pinSetupScreen.classList.remove('active');
+                if (dashboardScreen) dashboardScreen.classList.add('active');
+
+                setActiveNav(document.querySelectorAll('.nav-item')[0]);
+            }
+        }
+
+        // Initialize onboarding check on page load
+        // Note: onboarding check is now handled in main load event above
+        // window.addEventListener('load', () => {
+        //     initTheme();
+        //     setTimeout(checkOnboardingStatus, 100);
+        // });
+
+        // Also check immediately
+        initTheme();
+        checkOnboardingStatus();
+    </script>
+</body>
+</html>

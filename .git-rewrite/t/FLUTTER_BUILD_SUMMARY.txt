@@ -1,0 +1,166 @@
+================================================================================
+MOONBITE FLUTTER MOBILE WALLET - OVERVIEW
+================================================================================
+
+Project: Cross-platform, non-custodial mobile wallet for MoonBite (MBITE)
+Framework: Flutter (iOS/Android)
+
+Keys are generated and stored ON-DEVICE (encrypted secure storage). Transactions
+are signed locally. The app talks to a read-only explorer API only to fetch chain
+state and relay already-signed raw transactions. Private keys and seed phrases
+NEVER leave the device and are NEVER sent to any server.
+
+================================================================================
+KEY FILES
+================================================================================
+
+1. mobile/pubspec.yaml
+   - Flutter project manifest (name: bigcoin_mobile, version 1.0.0+1)
+   - App deps: http, provider, qr_flutter
+   - On-device wallet deps: bip39, coinslib, flutter_secure_storage, local_auth,
+     hex, bs58check
+   - SDK: Flutter >=3.0.0 <4.0.0
+
+2. mobile/lib/main.dart
+   - App entry point (BigCoinApp / "Big Coin Wallet")
+   - MultiProvider: ChainService + WalletController
+   - Routes to OnboardingScreen or HomeScreen depending on whether a wallet
+     already exists on the device
+   - Material 3 dark theme (0xFF121212 background, 0xFF1F6FD9 primary)
+
+3. mobile/lib/services/chain_service.dart
+   - ChainService: read/relay HTTP client. NEVER sees private keys.
+   - defaultBaseUrl = 'https://moonbite-production.up.railway.app'
+   - setBaseUrl(url) to retarget at runtime; 15s timeout
+   - Methods:
+     * getStatus()            -> GET  /api/status
+     * getUtxos(address)      -> GET  /api/address/<a>/utxos
+     * getBalance(address)    -> GET  /api/address/<a>/balance
+     * getFeeRate()           -> GET  /api/fee
+     * broadcast(rawTxHex)    -> POST /api/tx/broadcast  ({rawtx})
+     * getTransaction(txid)   -> GET  /api/tx/<txid>
+   - Errors surface as ChainApiException(message, statusCode)
+
+4. mobile/lib/models/chain_models.dart
+   - Hand-written data models (NO codegen / build_runner needed):
+     * ChainStatus  (chain, blocks, headers, bestBlockHash, difficulty,
+                     verificationProgress, mempoolTxs, connections, subversion, demo)
+     * Utxo         (txid, vout, amount [MBITE], scriptPubKey, height, confirmations)
+     * WalletBalance(address, confirmed, unconfirmed, total, utxoCount, demo)
+   - Balance JSON: {address, confirmed, unconfirmed, total, utxo_count, demo}
+     Amounts are whole MBITE (1 MBITE = 1e8 base units).
+
+5. mobile/lib/wallet/  (on-device, non-custodial key layer)
+   - wallet_controller.dart : wallet state (ChangeNotifier), loadExisting()
+   - hd_wallet_service.dart  : BIP39 seed + HD key derivation
+   - secure_key_store.dart   : encrypted key storage
+   - tx_builder.dart         : builds & signs transactions locally
+   - address_script.dart     : address <-> scriptPubKey
+   - moonbite_network.dart   : MoonBite network parameters
+
+6. mobile/lib/screens/
+   - onboarding_screen.dart  : create / import BIP39 seed phrase
+   - home_screen.dart        : main tabbed shell
+   - wallet_screen.dart      : address, receive (QR), balance, UTXO count
+   - send_screen.dart        : build/sign/broadcast a payment
+   - blockchain_screen.dart  : chain status
+
+================================================================================
+SCREEN FEATURES
+================================================================================
+
+ONBOARDING SCREEN:
+  - Generate a new BIP39 seed phrase or import an existing one
+  - Seed phrase is stored on-device in encrypted secure storage
+  - The phrase is the ONLY backup; there is no server-side recovery
+
+WALLET SCREEN:
+  - Show address (with QR for receiving)
+  - Confirmed / unconfirmed / total balance
+  - UTXO count
+
+SEND SCREEN:
+  - Enter recipient + amount
+  - Coin selection from fetched UTXOs; fee via /api/fee
+  - Transaction built and signed ON-DEVICE, then broadcast via /api/tx/broadcast
+
+BLOCKCHAIN SCREEN:
+  - Chain, block height, best block hash
+  - Difficulty, mempool size, connections
+  - Refresh
+
+================================================================================
+DEPENDENCIES
+================================================================================
+
+App / networking:
+  - http: ^1.1.0          (HTTP client)
+  - provider: ^6.0.0      (state management)
+  - qr_flutter: ^4.1.0    (QR code display)
+
+On-device wallet (non-custodial):
+  - bip39: ^1.0.6                 (mnemonic seed phrase)
+  - coinslib: ^3.1.8              (HD wallet, secp256k1, addresses, WIF)
+  - flutter_secure_storage: ^9.0.0 (encrypted key storage)
+  - local_auth: ^2.1.7            (PIN / biometric unlock)
+  - hex: ^0.2.0                   (scriptPubKey hex <-> bytes)
+  - bs58check: ^1.0.2             (base58check for legacy addresses)
+
+Note: json_annotation / json_serializable / build_runner remain in pubspec but
+the current chain_models.dart is hand-written, so no code generation is required.
+
+================================================================================
+SETUP INSTRUCTIONS
+================================================================================
+
+1. INSTALL FLUTTER (if not already installed):
+   Download from: https://flutter.dev/docs/get-started/install
+   Verify: flutter --version && flutter doctor
+
+2. NAVIGATE TO PROJECT:
+   cd C:/Users/%USERNAME%/Desktop/BigCoinBB/mobile
+
+3. INSTALL DEPENDENCIES:
+   flutter pub get
+
+4. RUN (Android emulator/device or iOS simulator/device):
+   flutter run
+
+5. FIRST LAUNCH:
+   Complete onboarding to create/import a seed phrase, then back it up.
+
+6. BUILD FOR RELEASE:
+   Android: flutter build apk --release
+   iOS:     flutter build ios --release
+
+================================================================================
+ARCHITECTURE & DESIGN
+================================================================================
+
+Non-custodial architecture:
+  - ChainService is READ/RELAY only and never receives keys
+  - All key derivation and transaction signing happen in lib/wallet/
+  - Only fully-signed raw transactions are sent to the network
+
+State management:
+  - provider: ChainService + WalletController registered in main.dart
+  - _Root decides onboarding vs home based on WalletController.hasWallet
+
+Data models:
+  - Hand-written plain Dart models in lib/models/chain_models.dart
+
+UI/UX:
+  - Material 3 dark theme, 0xFF1F6FD9 primary
+  - Screen-level stateful widgets
+
+================================================================================
+IMPORTANT NOTES
+================================================================================
+
+- Non-custodial: seed phrase / private keys never leave the device
+- No local web_app.py backend is required; the app uses a read-only explorer API
+- Default explorer: https://moonbite-production.up.railway.app
+- Pre-mainnet: a `demo: true` flag in responses means placeholder chain data
+- MBITE is not an investment or a security; this is an educational/pre-mainnet build
+
+================================================================================

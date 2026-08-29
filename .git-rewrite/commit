@@ -1,0 +1,14 @@
+tree aa9009e3198067263ed4790f7ca9d47812cb79be
+parent ccb43471be2a92a585143432f481574408aeb1b0
+author MoonBite Coin <moonbite@users.noreply.github.com> 1785007588 +0300
+committer MoonBite Coin <moonbite@users.noreply.github.com> 1785007588 +0300
+
+Rewrite marketing copy in the homepage's editorial voice
+
+Sharpen headlines and body copy across the five nav pages
+(get-wallet, mine, markets, why, about) to the punchy, honest
+voice of home_v2. No fabricated prices/listings; all honesty
+strips, real download links, API endpoints, and markets JS/form
+IDs left untouched.
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
