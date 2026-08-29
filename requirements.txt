@@ -1,3 +1,6 @@
+flask>=2.0.0
+werkzeug>=2.0.0
+jinja2>=3.0.0
 ecdsa>=0.19
 pytest>=8
-qrcode>=7.4  # optional: server-side merchant payment QR (SVG, no Pillow needed)
+qrcode>=7.4
