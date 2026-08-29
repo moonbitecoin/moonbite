@@ -40,7 +40,6 @@ from flask import (
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-import exchange
 import forum
 import merchants
 import price_feed
