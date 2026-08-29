@@ -1851,25 +1851,10 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
             <div class="screen" id="walletsScreen">
                 <div class="screen-header">
                     <h1>My Wallets</h1>
-                    <p>Manage your wallets</p>
+                    <p>Your active wallet</p>
                 </div>
-                <div class="screen-content">
-                    <div class="wallet-item">
-                        <div class="wallet-name">MoonBite Wallet 1</div>
-                        <div class="wallet-balance">5.1234 MBITE</div>
-                    </div>
-
-                    <div class="wallet-item">
-                        <div class="wallet-name">MoonBite Wallet 2</div>
-                        <div class="wallet-balance">2.5678 MBITE</div>
-                    </div>
-
-                    <div class="wallet-item">
-                        <div class="wallet-name">Trading Wallet</div>
-                        <div class="wallet-balance">10.0000 MBITE</div>
-                    </div>
-
-                    <button class="btn btn-primary" onclick="showScreen('createWalletScreen')">➕ Create New Wallet</button>
+                <div class="screen-content" id="walletsContainer">
+                    <!-- Dynamically populated with user's actual wallet -->
                 </div>
             </div>
 
@@ -2744,6 +2729,11 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                 if (screenId === 'receiveScreen') {
                     setTimeout(generateQRCode, 100);
                 }
+
+                // Populate wallets screen with user's actual wallet data
+                if (screenId === 'walletsScreen') {
+                    setTimeout(populateWalletsScreen, 100);
+                }
             }
         }
 
@@ -3322,6 +3312,24 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
             setTimeout(() => {
                 showScreen('loginScreen');
             }, 500);
+        }
+
+        // Populate wallets screen with user's actual wallet (not demo data)
+        function populateWalletsScreen() {
+            const wallet = CustodialWallet.getWallet();
+            const container = document.getElementById('walletsContainer');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="wallet-item">
+                    <div class="wallet-name">${wallet.walletName}</div>
+                    <div class="wallet-balance">${mbite(wallet.balanceCents)} MBITE</div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+                        ${wallet.address}
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="showScreen('dashboardScreen')" style="width: 100%; margin-top: var(--spacing-lg);">View Details →</button>
+            `;
         }
 
         // PIN verification for returning users (fallback option)
