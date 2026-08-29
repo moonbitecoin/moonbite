@@ -49,7 +49,23 @@ import wall
 # from wallet import address_from_pubkey_hash, is_valid_address, pubkey_hash_from_address, HDWallet
 
 # Stubs for compatibility
-class BlockStore: pass
+class BlockStore:
+    def __init__(self, *a, **kw): pass
+    def load_blocks_in_height_order(self): return []
+
+
+class _StubChain:
+    tip = "0" * 64
+    height = 0
+    blocks = []
+
+    def add_block(self, block): return False
+
+
+class Node:
+    def __init__(self, *a, **kw):
+        self.chain = _StubChain()
+        self.mempool = []
 def generate_keypair(): return None, None
 def pubkey_hash(): return None
 def address_from_pubkey_hash(h): return "moonXXXXX"
@@ -548,9 +564,12 @@ def _consensus_dict() -> dict:
     Injected into every template and served at /api/consensus so no page
     ever copy-pastes a consensus number again.
     """
-    from block import block_subsidy
     from params import (CENTS_PER_COIN, HALVING_INTERVAL, INITIAL_SUBSIDY,
                         MAX_SUPPLY, TARGET_BLOCK_TIME)
+
+    def block_subsidy(h: int) -> int:
+        eras = h // HALVING_INTERVAL
+        return 0 if eras >= 64 else INITIAL_SUBSIDY >> eras
     try:
         height = get_node().chain.height
     except Exception:
