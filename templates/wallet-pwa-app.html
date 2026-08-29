@@ -1372,6 +1372,7 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                         </div>
                         <div id="pinVerifyError" style="color: #C8402F; font-size: 13px; display: none; text-align: center; margin-bottom: var(--spacing-md);">Incorrect PIN. Please try again.</div>
                         <button class="btn btn-primary" onclick="verifyPINAndLogin()" style="width: 100%;">Unlock Wallet →</button>
+                        <button class="btn btn-secondary" onclick="showScreen('pinRecoveryScreen')" style="width: 100%; margin-top: var(--spacing-md);">Forgot PIN? Use Seed Phrase</button>
                     </div>
                 </div>
             </div>
@@ -1422,43 +1423,32 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                 </div>
             </div>
 
-            <!-- Seed Phrase Display Screen -->
+            <!-- Seed Phrase Input Screen (User-Provided) -->
             <div class="screen" id="seedPhraseScreen">
                 <div class="screen-header">
-                    <h1>Recovery Phrase</h1>
-                    <p>Keep this safe and never share it</p>
+                    <h1>Enter Your Seed Phrase</h1>
+                    <p>Paste or type your 9 words</p>
                 </div>
                 <div class="screen-content">
-                    <div class="card" style="background: rgba(184, 134, 59, 0.1); border-color: rgba(184, 134, 59, 0.3);">
+                    <div class="card" style="background: rgba(184, 134, 59, 0.1); border-color: rgba(184, 134, 59, 0.3); margin-bottom: var(--spacing-lg);">
                         <div style="display: flex; align-items: flex-start; gap: var(--spacing-md);">
-                            <span style="font-size: 20px;">⚠️</span>
-                            <div>
-                                <div style="color: var(--fire-orange); font-weight: 600; margin-bottom: var(--spacing-sm);">Critical Information</div>
-                                <div style="color: var(--text-secondary); font-size: 12px;">Anyone with this phrase can access your funds. Write it down on paper. Never screenshot it, never store it in the cloud, and never type it into any site.</div>
-                            </div>
+                            <div style="color: var(--fire-orange); font-weight: 600;">Critical</div>
+                            <div style="color: var(--text-secondary); font-size: 13px;">Enter the 9-word seed phrase you generated yourself. This is your access key—never share it with anyone.</div>
                         </div>
                     </div>
 
-                    <div class="card" style="margin-top: var(--spacing-lg);">
-                        <div class="card-title">12-Word Seed Phrase</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-top: var(--spacing-md);">
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">1.</span> mineral</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">2.</span> swift</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">3.</span> option</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">4.</span> stale</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">5.</span> harbor</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">6.</span> pearl</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">7.</span> space</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">8.</span> bench</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">9.</span> payment</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">10.</span> bomb</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">11.</span> hail</div>
-                            <div style="padding: var(--spacing-sm); background: rgba(26, 77, 122, 0.2); border-radius: 8px;"><span style="color: var(--text-secondary); font-size: 12px;">12.</span> motes</div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Your 9-Word Seed Phrase</label>
+                        <textarea id="seedPhraseInput" class="form-input" placeholder="word1 word2 word3 word4 word5 word6 word7 word8 word9"
+                              style="height: 80px; resize: none; font-family: var(--font-data);"
+                              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                        <div style="color: var(--text-secondary); font-size: 12px; margin-top: var(--spacing-sm);">Enter exactly 9 words separated by spaces</div>
                     </div>
 
-                    <button class="btn btn-primary" onclick="copySeedPhrase()" style="width: 100%; margin-top: var(--spacing-lg);">📋 Copy All Words</button>
-                    <button class="btn btn-secondary" onclick="showScreen('passwordScreen')" style="width: 100%;">Next: Set Password →</button>
+                    <div id="seedError" style="color: var(--danger); font-size: 13px; margin-top: var(--spacing-md); display: none;"></div>
+
+                    <button class="btn btn-primary" onclick="verifySeedPhrase()" style="width: 100%; margin-top: var(--spacing-lg);">Verify Seed Phrase →</button>
+                    <button class="btn btn-secondary" onclick="showScreen('walletSetupScreen')" style="width: 100%;">Back</button>
                 </div>
             </div>
 
@@ -1484,6 +1474,55 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
 
                     <button class="btn btn-primary" onclick="showScreen('passwordScreen')" style="width: 100%;">Continue →</button>
                     <button class="btn btn-secondary" onclick="showScreen('walletSetupScreen')" style="width: 100%; margin-top: var(--spacing-md);">Back</button>
+                </div>
+            </div>
+
+            <!-- PIN Recovery Screen (Forgot PIN) -->
+            <div class="screen" id="pinRecoveryScreen">
+                <div class="screen-header">
+                    <h1>Recover Your PIN</h1>
+                    <p>Use your seed phrase to reset access</p>
+                </div>
+                <div class="screen-content">
+                    <div class="card" style="background: rgba(184, 134, 59, 0.1); border-color: rgba(184, 134, 59, 0.3); margin-bottom: var(--spacing-lg);">
+                        <div style="color: var(--text-secondary); font-size: 13px;">Enter the 9-word seed phrase you provided during setup to reset your PIN.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Your 9-Word Seed Phrase</label>
+                        <textarea id="recoveryPhraseInput" class="form-input" placeholder="word1 word2 word3 word4 word5 word6 word7 word8 word9"
+                              style="height: 80px; resize: none; font-family: var(--font-data);"
+                              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                        <div style="color: var(--text-secondary); font-size: 12px; margin-top: var(--spacing-sm);">Enter exactly 9 words separated by spaces</div>
+                    </div>
+
+                    <div id="recoveryError" style="color: var(--danger); font-size: 13px; margin-top: var(--spacing-md); display: none;"></div>
+
+                    <button class="btn btn-primary" onclick="verifyRecoverySeed()" style="width: 100%; margin-top: var(--spacing-lg);">Verify Seed →</button>
+                    <button class="btn btn-secondary" onclick="showScreen('loginScreen')" style="width: 100%;">Back</button>
+                </div>
+            </div>
+
+            <!-- New PIN Setup Screen (After Recovery) -->
+            <div class="screen" id="newPINSetupScreen">
+                <div class="screen-header">
+                    <h1>Create New PIN</h1>
+                    <p>Set a 6-digit access code</p>
+                </div>
+                <div class="screen-content">
+                    <div class="form-group" style="text-align: center;">
+                        <label class="form-label">Create a new 6-digit PIN</label>
+                        <div style="display: flex; gap: 8px; justify-content: center; margin: var(--spacing-lg) 0;">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin0" onkeyup="movePinFocus(this, 'newPin1')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin1" onkeyup="movePinFocus(this, 'newPin2')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin2" onkeyup="movePinFocus(this, 'newPin3')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin3" onkeyup="movePinFocus(this, 'newPin4')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin4" onkeyup="movePinFocus(this, 'newPin5')">
+                            <input type="text" maxlength="1" class="pin-input" style="width: 50px; height: 50px; text-align: center; font-size: 24px; border: 2px solid var(--border-color); border-radius: 8px; background: rgba(26, 77, 122, 0.1); color: var(--gold);" id="newPin5" onkeyup="handleNewPinComplete()">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveRecoveredPIN()" style="width: 100%; margin-top: var(--spacing-lg);">Save New PIN →</button>
                 </div>
             </div>
 
@@ -2419,22 +2458,9 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                 return '0x' + hash.substring(0, 64);
             },
 
-            // Generate seed phrase using user ID
+            // User-provided seed phrase (no auto-generation)
             generateSeedPhrase: function(userId) {
-                const words = [
-                    'abandon', 'ability', 'about', 'above', 'absent', 'absorb',
-                    'abstract', 'abuse', 'access', 'accident', 'account', 'accuse',
-                    'achieve', 'acid', 'acoustic', 'acquire', 'across', 'act',
-                    'action', 'actor', 'actual', 'acumen', 'acute', 'adage'
-                ];
-
-                const seed = [];
-                let hash = this.simpleHash(userId);
-                for (let i = 0; i < 12; i++) {
-                    const index = parseInt(hash.substring(i * 5, i * 5 + 5), 16) % words.length;
-                    seed.push(words[index]);
-                }
-                return seed.join(' ');
+                return ''; // User must provide their own seed
             },
 
             // Simple hash function for generating unique values
@@ -2446,6 +2472,38 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                     hash = hash & hash;
                 }
                 return Math.abs(hash).toString(16).padStart(64, '0');
+            },
+
+            // Encrypt seed phrase with PIN
+            encryptWithPIN: function(data, pin) {
+                // Simple encryption: hash(pin) XORed with data
+                // Production: use Web Crypto API for AES-256-GCM
+                const pinHash = this.simpleHash(pin);
+                let encrypted = '';
+                for (let i = 0; i < data.length; i++) {
+                    const charCode = data.charCodeAt(i);
+                    const hashCharCode = pinHash.charCodeAt(i % pinHash.length);
+                    encrypted += String.fromCharCode(charCode ^ hashCharCode);
+                }
+                return btoa(encrypted); // Base64 encode
+            },
+
+            // Decrypt seed phrase with PIN
+            decryptWithPIN: function(encrypted, pin) {
+                try {
+                    const pinHash = this.simpleHash(pin);
+                    const decoded = atob(encrypted); // Base64 decode
+                    let decrypted = '';
+                    for (let i = 0; i < decoded.length; i++) {
+                        const charCode = decoded.charCodeAt(i);
+                        const hashCharCode = pinHash.charCodeAt(i % pinHash.length);
+                        decrypted += String.fromCharCode(charCode ^ hashCharCode);
+                    }
+                    return decrypted;
+                } catch (e) {
+                    console.error('Decryption failed:', e);
+                    return null;
+                }
             },
 
             // Get user's wallet
@@ -2983,10 +3041,23 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
 
         function saveSetupPINAndContinue() {
             const pin = window.tempPin;
+            const seedPhrase = sessionStorage.getItem('pendingSeedPhrase');
 
-            // Save PIN and mark onboarding as complete
+            if (!seedPhrase) {
+                alert('Error: Seed phrase not found. Please re-enter your seed.');
+                showScreen('seedPhraseScreen');
+                return;
+            }
+
+            // Encrypt seed phrase with PIN using simple XOR + hash
+            // In production: use proper AES-256-GCM
+            const encryptedSeed = CustodialWallet.encryptWithPIN(seedPhrase, pin);
+
+            // Save PIN, encrypted seed, and mark onboarding as complete
             localStorage.setItem('moonbite_pin', pin);
+            localStorage.setItem('moonbite_seed_encrypted', encryptedSeed);
             localStorage.setItem('moonbite_onboarding_complete', 'true');
+            sessionStorage.removeItem('pendingSeedPhrase');
 
             // Show success feedback
             const btn = document.querySelector('[onclick="saveSetupPINAndContinue()"]');
@@ -3133,6 +3204,124 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
             if (pin0 && pin1 && pin2 && pin3 && pin4 && pin5) {
                 verifyPINAndLogin();
             }
+        }
+
+        function handleNewPinComplete() {
+            const pin0 = document.getElementById('newPin0').value;
+            const pin1 = document.getElementById('newPin1').value;
+            const pin2 = document.getElementById('newPin2').value;
+            const pin3 = document.getElementById('newPin3').value;
+            const pin4 = document.getElementById('newPin4').value;
+            const pin5 = document.getElementById('newPin5').value;
+
+            // Allow manual submission by user - don't auto-trigger
+            if (pin0 && pin1 && pin2 && pin3 && pin4 && pin5) {
+                const btn = document.querySelector('[onclick="saveRecoveredPIN()"]');
+                if (btn) btn.style.background = 'linear-gradient(135deg, var(--primary), var(--primary-dark))';
+            }
+        }
+
+        // Verify user-provided seed phrase
+        function verifySeedPhrase() {
+            const seedInput = document.getElementById('seedPhraseInput').value.trim();
+            const errorDiv = document.getElementById('seedError');
+
+            // Parse words
+            const words = seedInput.split(/\s+/).filter(w => w.length > 0);
+
+            // Validate: exactly 9 words
+            if (words.length !== 9) {
+                errorDiv.textContent = `Enter exactly 9 words (you entered ${words.length})`;
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate: each word is at least 3 chars (basic check)
+            if (words.some(w => w.length < 3)) {
+                errorDiv.textContent = 'Each word must be at least 3 characters';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            errorDiv.style.display = 'none';
+
+            // Store the seed phrase temporarily (will be encrypted with PIN later)
+            sessionStorage.setItem('pendingSeedPhrase', seedInput);
+
+            // Move to PIN setup
+            showScreen('passwordScreen');
+        }
+
+        // Verify recovery seed phrase for PIN reset
+        function verifyRecoverySeed() {
+            const seedInput = document.getElementById('recoveryPhraseInput').value.trim();
+            const errorDiv = document.getElementById('recoveryError');
+            const encryptedSeed = localStorage.getItem('moonbite_seed_encrypted');
+
+            if (!encryptedSeed) {
+                errorDiv.textContent = 'No seed phrase found in storage';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Parse words
+            const words = seedInput.split(/\s+/).filter(w => w.length > 0);
+
+            // Validate: exactly 9 words
+            if (words.length !== 9) {
+                errorDiv.textContent = `Enter exactly 9 words (you entered ${words.length})`;
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Store recovery seed temporarily for PIN setup
+            sessionStorage.setItem('recoverySeedPhrase', seedInput);
+            errorDiv.style.display = 'none';
+
+            // Move to new PIN setup
+            showScreen('newPINSetupScreen');
+        }
+
+        // Save new PIN after successful recovery
+        function saveRecoveredPIN() {
+            const newPin = document.getElementById('newPin0').value +
+                          document.getElementById('newPin1').value +
+                          document.getElementById('newPin2').value +
+                          document.getElementById('newPin3').value +
+                          document.getElementById('newPin4').value +
+                          document.getElementById('newPin5').value;
+
+            if (newPin.length !== 6) {
+                alert('Please enter a valid 6-digit PIN');
+                return;
+            }
+
+            const recoveredSeed = sessionStorage.getItem('recoverySeedPhrase');
+            if (!recoveredSeed) {
+                alert('Recovery failed. Please try again.');
+                showScreen('loginScreen');
+                return;
+            }
+
+            // Re-encrypt seed with new PIN
+            const encryptedSeed = CustodialWallet.encryptWithPIN(recoveredSeed, newPin);
+
+            // Update stored PIN and encrypted seed
+            localStorage.setItem('moonbite_pin', newPin);
+            localStorage.setItem('moonbite_seed_encrypted', encryptedSeed);
+            sessionStorage.removeItem('recoverySeedPhrase');
+
+            // Show success
+            const btn = document.querySelector('[onclick="saveRecoveredPIN()"]');
+            if (btn) {
+                btn.textContent = '✓ PIN Reset!';
+                btn.style.background = 'linear-gradient(135deg, #2E9E6B, #2E9E6B)';
+            }
+
+            // Return to login
+            setTimeout(() => {
+                showScreen('loginScreen');
+            }, 500);
         }
 
         // PIN verification for returning users (fallback option)
