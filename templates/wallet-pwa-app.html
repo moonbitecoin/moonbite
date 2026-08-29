@@ -1003,6 +1003,169 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+
+        /* EMPTY STATE: User has 0 MBITE */
+        .empty-state-card {
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, rgba(22,26,34,0.4) 0%, rgba(35,40,51,0.4) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .empty-hero {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        .empty-hero h2 {
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.5rem;
+        }
+
+        .empty-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .empty-paths {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .path-card {
+            background: rgba(22,26,34,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: var(--spacing-md);
+        }
+
+        .path-title {
+            font-family: var(--font-display);
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .path-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .path-link {
+            display: inline-block;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .path-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .path-link:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .empty-address-box {
+            background: rgba(217,164,65,0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: var(--spacing-md);
+            text-align: center;
+        }
+
+        .addr-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--spacing-sm);
+            display: block;
+        }
+
+        .addr-display {
+            background: rgba(0,0,0,0.3);
+            color: var(--primary);
+            padding: var(--spacing-md);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-bottom: var(--spacing-md);
+            user-select: all;
+        }
+
+        .addr-copy-btn {
+            background: var(--primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .addr-copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .addr-copy-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* BALANCE STATE: User has MBITE */
+        .balance-state-card {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .empty-state-card {
+                padding: var(--spacing-md);
+            }
+
+            .empty-hero h2 {
+                font-size: 1.25rem;
+            }
+
+            .path-card {
+                padding: var(--spacing-md);
+            }
+
+            .empty-icon {
+                font-size: 2.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1444,71 +1607,106 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
             <div class="screen" id="dashboardScreen">
                 <div class="screen-content dash-content">
                     <div class="install-prompt" id="installPrompt">
-                        <div class="install-prompt-title">📱 Install MoonBite App</div>
-                        <div class="install-prompt-text">Get faster access and offline support</div>
+                        <div class="install-prompt-title">📱 Install MoonBite Wallet</div>
+                        <div class="install-prompt-text">Fast, offline access to your MBITE</div>
                         <div class="install-prompt-buttons">
                             <button class="install-prompt-btn" id="installBtn">Install</button>
                             <button class="install-prompt-btn" id="dismissBtn">Later</button>
                         </div>
                     </div>
 
-                    <!-- The vault card -->
-                    <div class="premium-balance-card">
-                        <div class="vault-top">
-                            <div class="vault-brand">
-                                <svg class="brand-mark" viewBox="-140 -125 280 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="#F5F2EA"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg>
-                                <span>MOONBITE</span>
-                            </div>
-                            <div class="vault-net">MAINNET</div>
+                    <!-- EMPTY STATE: No balance yet -->
+                    <div id="emptyStateCard" class="empty-state-card" style="display:none;">
+                        <div class="empty-hero">
+                            <div class="empty-icon">⛏️</div>
+                            <h2>Welcome to MoonBite</h2>
+                            <p class="empty-subtitle">You don't have any MBITE yet.</p>
                         </div>
-                        <div class="vault-mid">
-                            <div class="balance-label">Total balance</div>
-                            <div class="balance-amount">17.6912<svg class="mbite-glyph" viewBox="-140 -125 280 250" aria-label="MBITE" role="img"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="currentColor"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg></div>
-                            <div class="vault-sub" id="vaultSub">Mined, not bought</div>
+
+                        <div class="empty-paths">
+                            <div class="path-card">
+                                <div class="path-title">1. Mine MBITE</div>
+                                <p class="path-desc">Run a RandomX miner on your CPU to earn blocks.</p>
+                                <a href="https://moonbite.org/start" target="_blank" class="path-link">Mining Guide →</a>
+                            </div>
+
+                            <div class="path-card">
+                                <div class="path-title">2. Receive from Others</div>
+                                <p class="path-desc">Someone sends you MBITE to your wallet address.</p>
+                                <button onclick="showScreen('receiveScreen')" class="path-link">Show My Address →</button>
+                            </div>
+
+                            <div class="path-card">
+                                <div class="path-title">3. Testnet Sandbox</div>
+                                <p class="path-desc">Mine on testnet to learn with free MBITE.</p>
+                                <a href="https://moonbite.org/classic" target="_blank" class="path-link">Switch Network →</a>
+                            </div>
                         </div>
-                        <div class="vault-bottom">
-                            <div class="vault-holder">
-                                <div class="vault-k">Wallet</div>
-                                <div class="vault-v">WALLET 1</div>
-                            </div>
-                            <div class="vault-holder" style="text-align:right;">
-                                <div class="vault-k">Block height</div>
-                                <div class="vault-v num" id="vaultHeight">0</div>
-                            </div>
+
+                        <div class="empty-address-box">
+                            <div class="addr-label">Your Mainnet Address</div>
+                            <div class="addr-display mono" id="emptyAddrDisplay">moon1...</div>
+                            <button onclick="copyToClipboard(document.getElementById('emptyAddrDisplay').textContent)" class="addr-copy-btn">Copy Address</button>
                         </div>
                     </div>
 
-                    <div class="premium-wallet-card">
-                        <div class="wallet-icon">👝</div>
-                        <div class="wallet-details">
-                            <div class="wallet-label">Primary Wallet</div>
-                            <div class="wallet-name-display">MoonBite Wallet 1</div>
-                            <div class="wallet-amount">5.1234 MBITE</div>
+                    <!-- BALANCE STATE: User has MBITE -->
+                    <div id="balanceStateCard" class="balance-state-card" style="display:none;">
+                        <!-- The vault card -->
+                        <div class="premium-balance-card">
+                            <div class="vault-top">
+                                <div class="vault-brand">
+                                    <svg class="brand-mark" viewBox="-140 -125 280 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="#F5F2EA"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg>
+                                    <span>MOONBITE</span>
+                                </div>
+                                <div class="vault-net">MAINNET</div>
+                            </div>
+                            <div class="vault-mid">
+                                <div class="balance-label">Total Balance</div>
+                                <div class="balance-amount"><span id="balanceAmount">0.0000</span><svg class="mbite-glyph" viewBox="-140 -125 280 250" aria-label="MBITE" role="img"><path d="M 13.99 -99.02 A 100 100 0 1 0 99.02 -13.99 A 62.00 62.00 0 0 1 13.99 -99.02 Z" fill="currentColor"/><rect x="-127.5" y="-34" width="255" height="13" rx="6.5" fill="#D9A441"/><rect x="-127.5" y="18" width="255" height="13" rx="6.5" fill="#D9A441"/></svg></div>
+                                <div class="vault-sub" id="vaultSub">Earned through mining</div>
+                            </div>
+                            <div class="vault-bottom">
+                                <div class="vault-holder">
+                                    <div class="vault-k">Wallet</div>
+                                    <div class="vault-v" id="walletName">WALLET 1</div>
+                                </div>
+                                <div class="vault-holder" style="text-align:right;">
+                                    <div class="vault-k">Blocks to Halving</div>
+                                    <div class="vault-v num" id="blocksRemaining">330000</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="action-buttons">
-                        <button class="action-btn" onclick="showScreen('walletsScreen')">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                <rect x="2" y="7" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
-                                <path d="M2 10h20" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                            <span>Wallets</span>
-                        </button>
-                        <button class="action-btn" onclick="showScreen('sendScreen')">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M7 17L17 7"></path>
-                                <path d="M7 7h10v10"></path>
-                            </svg>
-                            <span>Send</span>
-                        </button>
-                        <button class="action-btn" onclick="showScreen('receiveScreen')">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 7L7 17"></path>
-                                <path d="M17 17H7V7"></path>
-                            </svg>
-                            <span>Receive</span>
-                        </button>
+                        <div class="premium-wallet-card">
+                            <div class="wallet-icon">💎</div>
+                            <div class="wallet-details">
+                                <div class="wallet-label">Primary Wallet</div>
+                                <div class="wallet-name-display" id="walletNameDisplay">MoonBite Wallet 1</div>
+                                <div class="wallet-amount" id="walletAmount">0.0000 MBITE</div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="showScreen('walletsScreen')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1"/><circle cx="15" cy="9" r="1"/>
+                                </svg>
+                                <span>Wallets</span>
+                            </button>
+                            <button class="action-btn" onclick="showScreen('receiveScreen')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 7L7 17M17 17H7V7"/>
+                                </svg>
+                                <span>Receive</span>
+                            </button>
+                            <button class="action-btn" onclick="showScreen('sendScreen')">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 17L17 7M7 7h10v10"/>
+                                </svg>
+                                <span>Send</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2244,6 +2442,37 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
                     const amountEl = premiumWalletCard.querySelector('.wallet-amount');
                     if (amountEl) amountEl.textContent = mbite(wallet.balanceCents) + ' MBITE';
                 }
+
+                // TOGGLE EMPTY VS BALANCE STATE
+                const emptyStateCard = document.getElementById('emptyStateCard');
+                const balanceStateCard = document.getElementById('balanceStateCard');
+                const isZeroBalance = wallet.balanceCents === 0;
+
+                if (emptyStateCard && balanceStateCard) {
+                    if (isZeroBalance) {
+                        emptyStateCard.style.display = 'block';
+                        balanceStateCard.style.display = 'none';
+
+                        // Populate empty state address
+                        const emptyAddrDisplay = document.getElementById('emptyAddrDisplay');
+                        if (emptyAddrDisplay) {
+                            emptyAddrDisplay.textContent = wallet.address;
+                        }
+                    } else {
+                        emptyStateCard.style.display = 'none';
+                        balanceStateCard.style.display = 'block';
+
+                        // Update balance state values
+                        const balanceSpan = document.getElementById('balanceAmount');
+                        if (balanceSpan) balanceSpan.textContent = mbite(wallet.balanceCents);
+
+                        const walletNameSpan = document.getElementById('walletNameDisplay');
+                        if (walletNameSpan) walletNameSpan.textContent = wallet.walletName;
+
+                        const walletAmtSpan = document.getElementById('walletAmount');
+                        if (walletAmtSpan) walletAmtSpan.textContent = mbite(wallet.balanceCents) + ' MBITE';
+                    }
+                }
             }
         };
 
@@ -2311,6 +2540,25 @@ h1,h2,.big,.reveal .big,.balance-amount,.elapsed,.mort-big{
         });
 
         // Screen navigation
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '✓ Copied!';
+                    btn.style.background = 'var(--success)';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                }).catch(() => {
+                    alert('Could not copy address. Try manually selecting and copying.');
+                });
+            } else {
+                alert('Clipboard not available. Try manually selecting and copying.');
+            }
+        }
+
         function showScreen(screenId) {
             // Sync user's wallet data before changing screens
             CustodialWallet.syncAllScreens();
