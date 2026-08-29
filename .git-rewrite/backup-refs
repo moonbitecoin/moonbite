@@ -1,6 +1,0 @@
-0ce2595ef4f778f822e2ec65c8c74219a1b852af commit	refs/heads/backup-main-before-integrate
-2135bc8dd55ad4e070a990631404cc7904bdcc81 commit	refs/heads/main
-69fe539aed7a8b88079a717aa211ed84ee731de1 commit	refs/remotes/origin/HEAD
-69fe539aed7a8b88079a717aa211ed84ee731de1 commit	refs/remotes/origin/main
-1fdb4d7963683ea8db82bd4fe623f35482775674 commit	refs/stash
-1fb29375976ccafe15929961b2bf3ec1408d7643 commit	refs/tags/v0.2.0
